@@ -13,7 +13,7 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { PlaybackProvider } from './context/PlaybackContext';
 import { ApiProvider } from './context/ApiContext';
-import { SpotifyGqlApi } from '../Plugin/spotify/gql/index';
+import { SpotifyGqlApi } from '../Plugin/gql/index';
 
 const originalLog = console.log;
 const originalWarn = console.warn;

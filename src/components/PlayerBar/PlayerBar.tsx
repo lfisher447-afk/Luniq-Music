@@ -6,7 +6,7 @@ import QueueIcon from "../Icons/QueueIcon";
 import PlaybackSpeed from "../PlaybackSpeed/PlaybackSpeed";
 import SleepTimer from "../SleepTimer/SleepTimer";
 import Equalizer from "../Equalizer/Equalizer";
-import { SpotifyRadioEndpoint } from "../../../Plugin/spotify/gql/core/radio";
+import { SpotifyRadioEndpoint } from "../../../Plugin/gql/core/radio";
 import { DownloadIndicator } from "../DownloadIndicator/DownloadIndicator";
 
 import { ALBUM_PLACEHOLDER } from "../../constants/assets";
