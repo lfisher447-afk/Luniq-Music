@@ -100,15 +100,15 @@ export const fetchLyricsSmart = async (
         return data;
     }
 
-    console.log(`[LyricsHelper] Spotify failed. Step 2: Launching Parallel Race for fallbacks! 🏎️💨`);
+    console.log(`[LyricsHelper] Spotify failed. Step 2: Launching Parallel Race for fallbacks!`);
 
     const fallbacks = [
-        () => fetchBetterLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] 🏁 BetterLyrics won the race!'); return d; }),
-        () => fetchPaxsenixLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] 🏁 Paxsenix won the race!'); return d; }),
-        () => fetchLrcLibLyrics(cleanTrackName, primaryArtist, duration).then(d => { if(d) console.log('[LyricsHelper] 🏁 LRCLib won the race!'); return d; }),
-        () => fetchKugouLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] 🏁 KuGou won the race!'); return d; }),
-        () => fetchUnisonLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] 🏁 Unison won the race!'); return d; }),
-        () => fetchSimpMusicLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] 🏁 SimpMusic won the race!'); return d; })
+        () => fetchBetterLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] BetterLyrics won the race!'); return d; }),
+        () => fetchPaxsenixLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] Paxsenix won the race!'); return d; }),
+        () => fetchLrcLibLyrics(cleanTrackName, primaryArtist, duration).then(d => { if(d) console.log('[LyricsHelper] LRCLib won the race!'); return d; }),
+        () => fetchKugouLyrics(cleanTrackName, primaryArtist, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] KuGou won the race!'); return d; }),
+        () => fetchUnisonLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] Unison won the race!'); return d; }),
+        () => fetchSimpMusicLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName).then(d => { if(d) console.log('[LyricsHelper] SimpMusic won the race!'); return d; })
     ];
 
     data = await raceProviders(fallbacks);
@@ -120,7 +120,7 @@ export const fetchLyricsSmart = async (
     }
 
     // 5. Absolute Failure
-    console.log(`[LyricsHelper] ❌ All 8 providers failed to find lyrics for: ${cleanTrackName}`);
+    console.log(`[LyricsHelper] All 8 providers failed to find lyrics for: ${cleanTrackName}`);
     localStorage.setItem(cacheKey, 'NOT_FOUND');
     return null;
 };
