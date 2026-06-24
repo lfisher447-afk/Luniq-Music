@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import './Home.css';
 import { useApi } from '../../context/ApiContext';
-import type { BrowseSectionItem } from '../../../Plugin/gql/types/gql-api';
+import type { BrowseSectionItem } from '../../../Plugin/spotify/gql/types/gql-api';
 
 interface PlatformCookie {
     domain: string;

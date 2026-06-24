@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useMemo } from 'react';
-import { SpotifyGqlApi } from '../../Plugin/gql/index';
+import { SpotifyGqlApi } from '../../Plugin/spotify/gql/index';
 
 interface ApiContextType {
     api: SpotifyGqlApi;

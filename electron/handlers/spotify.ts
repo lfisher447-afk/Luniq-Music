@@ -1,5 +1,5 @@
 import { ipcMain, session } from 'electron';
-import { ElectronSpotifyAuth } from '../../Plugin/electron-auth.js';
+import { ElectronSpotifyAuth } from '../../Plugin/spotify/electron-auth.js';
 import Store from 'electron-store';
 const spotifyAuth = new ElectronSpotifyAuth();
 import { StoreSchema, schema } from '../store.js';

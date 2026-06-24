@@ -3,9 +3,9 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Sidebar.css';
 import { useApi } from '../../context/ApiContext';
 
-import type { GqlPlaylistSimplified } from '../../../Plugin/gql/types/gql-api';
+import type { GqlPlaylistSimplified } from '../../../Plugin/spotify/gql/types/gql-api';
 
-import type { Album, Artist } from '../../../Plugin/gql/types/web-api';
+import type { Album, Artist } from '../../../Plugin/spotify/gql/types/web-api';
 import CreatePlaylistModal from '../CreatePlaylist/CreatePlaylistModal';
 import { useLanguage } from '../../context/LanguageContext';
 
