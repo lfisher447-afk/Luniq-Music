@@ -1,0 +1,89 @@
+name: Bug report
+description: Something's not playing right? Tell us what broke.
+title: "[Bug] "
+labels:
+  - bug
+assignees:
+  - saraansx
+
+body:
+  - type: checkboxes
+    attributes:
+      label: Before filing
+      options:
+        - label: I have searched existing issues and this has not been reported before
+          required: true
+        - label: I am on the latest version of Lune
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Walk us through exactly what you did. Skip no steps.
+      value: |
+        1. Open Lune
+        2. Navigate to '...'
+        3. Click on '...'
+        4. See error / crash
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behaviour
+      description: What should have happened?
+      placeholder: Lune should have...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Actual behaviour
+      description: What happened instead?
+      placeholder: Instead, Lune...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Visual evidence
+      description: Screenshots or screen recordings that show the issue. Drag and drop directly here.
+      placeholder: Attach files by dragging and dropping or clicking here.
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Logs
+      description: Go to Settings > Logs in Lune and paste any relevant output below.
+      value: |
+        <details>
+        <summary>Console output</summary>
+
+        ```
+        paste here
+        ```
+        </details>
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: Lune version
+      placeholder: "e.g. 1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Operating system
+      placeholder: "e.g. Windows 11, macOS 14, Ubuntu 22.04"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Anything else that might help — related issues, workarounds you tried, frequency of occurrence.
+    validations:
+      required: false

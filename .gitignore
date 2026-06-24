@@ -1,0 +1,66 @@
+# General
+node_modules/
+dist/
+dist-electron/
+release/
+*.log
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+yt-cookies.txt
+/downloads/
+*.sqlite
+*.sqlite-journal
+
+# IDEs
+.idea/
+.qodo/
+
+# Auto-generated entries
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Sensitive files (auto-detected)
+.env
+build
+dist
+dist-electron
+electron-builder.json
+node_modules
+ArchiveTune-main/
