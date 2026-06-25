@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { SpotifyGqlApi } from '../../Plugin/gql/index';
+import { YoutubeMusicApi } from '../../Plugin/youtubemusic/index';
 
 interface ApiContextType {
     api: SpotifyGqlApi;
+    ytApi: YoutubeMusicApi;
 }
 
 const ApiContext = createContext<ApiContextType | null>(null);
@@ -18,9 +20,10 @@ export const ApiProvider: React.FC<ApiProviderProps> = ({ accessToken, cookies, 
     const spDc = useMemo(() => cookies?.find((c: any) => c.name === 'sp_dc')?.value, [cookies]);
     const spT = useMemo(() => cookies?.find((c: any) => c.name === 'sp_t')?.value, [cookies]);
     const api = useMemo(() => new SpotifyGqlApi(accessToken, spDc, spT, onUnauthorized), [accessToken, spDc, spT, onUnauthorized]);
+    const ytApi = useMemo(() => new YoutubeMusicApi(), []);
 
     return (
-        <ApiContext.Provider value={{ api }}>
+        <ApiContext.Provider value={{ api, ytApi }}>
             {children}
         </ApiContext.Provider>
     );
@@ -32,4 +35,12 @@ export const useApi = (): SpotifyGqlApi => {
         throw new Error('useApi must be used within an ApiProvider');
     }
     return context.api;
+};
+
+export const useYtApi = (): YoutubeMusicApi => {
+    const context = useContext(ApiContext);
+    if (!context) {
+        throw new Error('useYtApi must be used within an ApiProvider');
+    }
+    return context.ytApi;
 };

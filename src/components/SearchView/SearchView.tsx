@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './SearchView.css';
-import { useApi } from '../../context/ApiContext';
+import { useApi, useYtApi } from '../../context/ApiContext';
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { normalizeTrack, LuneTrack } from '../../types/track';
@@ -58,6 +58,7 @@ const SearchView = ({
     const trackMenuRef = useRef<HTMLDivElement>(null);
 
     const api = useApi();
+    const ytApi = useYtApi();
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -75,14 +76,26 @@ const SearchView = ({
 
             try {
                 if (activeFilter === 'all') {
-                    const res = await api.search.all(query, { limit: 40, topResults: 5 });
+                    const [res, ytRes] = await Promise.all([
+                        api.search.all(query, { limit: 40, topResults: 5 }),
+                        ytApi.search.query(query).catch(() => [])
+                    ]);
+                    
+                    if (res && ytRes && ytRes.length > 0) {
+                        res.tracks = [...res.tracks, ...ytRes] as any;
+                    }
+                    
                     setResults(res);
                 } else {
                     let res: any;
+                    let ytRes: any = [];
                     switch (activeFilter) {
                         case 'songs':
-                            res = await api.search.tracks(query, { limit: 50 });
-                            setResults((prev: any) => ({ ...prev, tracks: res.items }));
+                            [res, ytRes] = await Promise.all([
+                                api.search.tracks(query, { limit: 50 }),
+                                ytApi.search.query(query).catch(() => [])
+                            ]);
+                            setResults((prev: any) => ({ ...prev, tracks: [...res.items, ...ytRes] }));
                             break;
                         case 'artists':
                             res = await api.search.artists(query, { limit: 50 });
