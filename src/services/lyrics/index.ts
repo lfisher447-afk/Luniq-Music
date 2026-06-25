@@ -139,7 +139,6 @@ export const fetchLyrics = async (
       return data;
     }
 
-    // Fallback 1: BetterLyrics
     console.log(
       `[Lyrics] Native Spotify failed, trying BetterLyrics fallback for: ${cleanTrackName} by ${primaryArtist}`,
     );
@@ -160,7 +159,6 @@ export const fetchLyrics = async (
       return data;
     }
 
-    // Fallback 2: Paxsenix (Apple Music)
     console.log(
       `[Lyrics] BetterLyrics failed, trying Paxsenix (Apple Music) fallback for: ${cleanTrackName} by ${primaryArtist}`,
     );
@@ -181,7 +179,6 @@ export const fetchLyrics = async (
       return data;
     }
 
-    // Fallback 3: LRCLib
     console.log(
       `[Lyrics] Paxsenix (Apple Music) failed, trying LRCLib fallback for: ${cleanTrackName} by ${primaryArtist}`,
     );
@@ -197,7 +194,6 @@ export const fetchLyrics = async (
       return data;
     }
 
-    // Fallback 4: KuGou
     console.log(
       `[Lyrics] LRCLib failed, trying KuGou fallback for: ${cleanTrackName} by ${primaryArtist}`,
     );
@@ -217,7 +213,6 @@ export const fetchLyrics = async (
       }
     }
 
-    // Fallback 5: Unison
     console.log(
       `[Lyrics] KuGou failed, trying Unison fallback for: ${cleanTrackName} by ${primaryArtist}`,
     );
@@ -239,7 +234,6 @@ export const fetchLyrics = async (
       return data;
     }
 
-    // Fallback 6: SimpMusic
     if (videoId) {
       console.log(
         `[Lyrics] Unison failed, trying SimpMusic fallback for: ${cleanTrackName} (Video ID: ${videoId})`,
