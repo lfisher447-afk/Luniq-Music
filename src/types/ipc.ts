@@ -42,8 +42,9 @@ export interface IPCChannels {
     'remove-local-favorite': (id: string) => Promise<boolean>;
 
     
-    'get-stream-url': (name: string, artist: string, id: string, force?: boolean) => Promise<string | null>;
-    'cancel-stream': (id: string) => Promise<boolean>;
+    'get-stream-url': (name: string, artist: string, id: string, isPriority?: boolean, requester?: string, durationMs?: number, forceRefresh?: boolean, preferFallback?: boolean) => Promise<string | null>;
+    'cancel-stream': (id: string, requester?: string) => Promise<boolean>;
+    'invalidate-stream-cache': (name: string, artist: string, id: string) => Promise<{ success: true } | { success: false; error: string }>;
     'clear-cache': () => Promise<{ success: true } | { success: false; error: string }>;
     'open-cache-folder': () => Promise<boolean>;
 

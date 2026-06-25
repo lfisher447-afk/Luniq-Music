@@ -6,11 +6,33 @@ interface CacheEntry {
     expiresAt: number; 
 }
 
-const MIN_REQUEST_INTERVAL_MS = 1500; 
+const MIN_REQUEST_INTERVAL_MS = 1500;
 
-const CACHE_TTL_MS = 30 * 60 * 1000;
+const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000;
+const STREAM_URL_EXPIRY_SAFETY_MS = 60 * 1000;
 
 const MAX_CACHE_SIZE = 200;
+
+function extractExpireTimestampMsFromUrl(url: string): number | null {
+    try {
+        const match = url.match(/[?&]expire=(\d+)/);
+        if (match && match[1]) {
+            const seconds = parseInt(match[1], 10);
+            if (!isNaN(seconds)) {
+                return seconds * 1000;
+            }
+        }
+    } catch {}
+    return null;
+}
+
+function calculateCacheExpiry(url: string): number {
+    const expireMs = extractExpireTimestampMsFromUrl(url);
+    if (expireMs) {
+        return Math.max(0, expireMs - STREAM_URL_EXPIRY_SAFETY_MS);
+    }
+    return Date.now() + DEFAULT_CACHE_TTL_MS;
+}
 
 
 export class YtDlpAudio {
@@ -121,8 +143,16 @@ export class YtDlpAudio {
 
         this.urlCache.set(key, {
             url,
-            expiresAt: Date.now() + CACHE_TTL_MS
+            expiresAt: calculateCacheExpiry(url)
         });
+    }
+
+    invalidateCachedUrl(trackName: string, artistName: string, quality?: string, formatExt?: string): void {
+        const key = this.getCacheKey(trackName, artistName, quality, formatExt);
+        if (this.urlCache.has(key)) {
+            console.log(`[YtDlp] Invalidated cached URL for "${trackName}" by ${artistName}`);
+            this.urlCache.delete(key);
+        }
     }
 
         private async waitForRateLimit(isPriority = false): Promise<() => void> {

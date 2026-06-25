@@ -56,6 +56,30 @@ export function registerStreamingHandlers() {
     return defaultDir;
   };
 
+  const validateStreamUrl = async (
+    url: string,
+    signal: AbortSignal,
+  ): Promise<boolean> => {
+    if (!url || url.startsWith("lune-local://")) return true;
+    try {
+      const response = await fetch(url, {
+        method: "HEAD",
+        signal,
+      });
+      if (response.status >= 200 && response.status < 300) {
+        return true;
+      }
+      console.warn(
+        `[Audio Engine] Stream URL validation failed with status ${response.status}: ${url.slice(0, 100)}...`,
+      );
+      return false;
+    } catch (err: any) {
+      if (err.name === "AbortError") return false;
+      console.warn(`[Audio Engine] Stream URL validation error:`, err.message);
+      return true;
+    }
+  };
+
   const getStreamUrlWithFallback = async (
     trackName: string,
     artistName: string,
@@ -64,37 +88,74 @@ export function registerStreamingHandlers() {
     signal: AbortSignal,
     isPriority: boolean,
     durationMs: number,
+    options: {
+      forceRefresh?: boolean;
+      preferFallback?: boolean;
+      validateUrl?: boolean;
+    } = {},
   ): Promise<string> => {
-    const primary = getAudioEngine();
-    const fallback = getFallbackEngine();
+    const {
+      forceRefresh = false,
+      preferFallback = false,
+      validateUrl = true,
+    } = options;
 
-    try {
-      return await primary.getStreamUrl(
-        trackName,
-        artistName,
-        audioQuality,
-        audioFormat,
-        signal,
-        isPriority,
-        durationMs,
-      );
-    } catch (error: any) {
-      if (error.name === "AbortError" || signal.aborted) {
-        throw error;
+    const engines = preferFallback
+      ? [getFallbackEngine(), getAudioEngine()]
+      : [getAudioEngine(), getFallbackEngine()];
+
+    let lastError: any = null;
+    for (const engine of engines) {
+      try {
+        if (forceRefresh && typeof (engine as any).invalidateCachedUrl === "function") {
+          (engine as any).invalidateCachedUrl(
+            trackName,
+            artistName,
+            audioQuality,
+            "webm",
+          );
+        }
+
+        const url = await engine.getStreamUrl(
+          trackName,
+          artistName,
+          audioQuality,
+          audioFormat,
+          signal,
+          isPriority,
+          durationMs,
+        );
+
+        if (!url) {
+          throw new Error("Empty stream URL returned by engine");
+        }
+
+        if (validateUrl && !(await validateStreamUrl(url, signal))) {
+          if (typeof (engine as any).invalidateCachedUrl === "function") {
+            (engine as any).invalidateCachedUrl(
+              trackName,
+              artistName,
+              audioQuality,
+              "webm",
+            );
+          }
+          throw new Error(`Stream URL validation failed for ${engine.constructor.name}`);
+        }
+
+        return url;
+      } catch (error: any) {
+        if (error.name === "AbortError" || signal.aborted) {
+          throw error;
+        }
+        lastError = error;
+        console.warn(
+          `[Audio Engine] ${engine.constructor.name} failed for "${trackName}":`,
+          error.message || error,
+        );
       }
-      console.log(
-        `[Audio Engine] Primary engine failed for "${trackName}", trying fallback...`,
-      );
-      return await fallback.getStreamUrl(
-        trackName,
-        artistName,
-        audioQuality,
-        audioFormat,
-        signal,
-        isPriority,
-        durationMs,
-      );
     }
+
+    throw lastError || new Error("All audio engines failed");
   };
 
   const downloadTrackWithFallback = async (
@@ -148,6 +209,8 @@ export function registerStreamingHandlers() {
       isPriority: boolean = false,
       requester: string = "unknown",
       durationMs: number = 0,
+      forceRefresh: boolean = false,
+      preferFallback: boolean = false,
     ) => {
       try {
         if (trackId && trackId !== "unknown" && db) {
@@ -170,7 +233,15 @@ export function registerStreamingHandlers() {
               : "prefetch";
 
         let search = activeSearches.get(trackId);
-        if (!search) {
+        if (!search || forceRefresh) {
+          if (search && forceRefresh) {
+            search.controller.abort();
+            activeSearches.delete(trackId);
+            console.log(
+              `[Main] Force refresh requested, aborted existing fetch for: ${trackId}`,
+            );
+          }
+
           const controller = new AbortController();
           const lowDataMode = store.get("lowDataMode") || false;
           const audioQuality = lowDataMode
@@ -179,7 +250,7 @@ export function registerStreamingHandlers() {
           const audioFormat = store.get("audioFormat") || "mp4";
 
           console.log(
-            `[Main] Starting new stream fetch for: ${trackName} - ${artistName} (ID: ${trackId})`,
+            `[Main] Starting new stream fetch for: ${trackName} - ${artistName} (ID: ${trackId})${forceRefresh ? " [force refresh]" : ""}${preferFallback ? " [prefer fallback]" : ""}`,
           );
 
           const promise = getStreamUrlWithFallback(
@@ -190,6 +261,7 @@ export function registerStreamingHandlers() {
             controller.signal,
             isPriority,
             durationMs,
+            { forceRefresh, preferFallback, validateUrl: true },
           );
           search = { controller, promise, requesters: new Set() };
           activeSearches.set(trackId, search);
@@ -249,6 +321,50 @@ export function registerStreamingHandlers() {
         return false;
       }
       return false;
+    },
+  );
+
+  ipcMain.handle(
+    "invalidate-stream-cache",
+    async (
+      _event,
+      trackName: string,
+      artistName: string,
+      trackId: string = "unknown",
+    ) => {
+      try {
+        const lowDataMode = store.get("lowDataMode") || false;
+        const audioQuality = lowDataMode
+          ? "96"
+          : store.get("audioQuality") || "128";
+
+        getAudioEngine().invalidateCachedUrl(
+          trackName,
+          artistName,
+          audioQuality,
+          "webm",
+        );
+        getFallbackEngine().invalidateCachedUrl(
+          trackName,
+          artistName,
+          audioQuality,
+          "webm",
+        );
+
+        const search = activeSearches.get(trackId);
+        if (search) {
+          search.controller.abort();
+          activeSearches.delete(trackId);
+        }
+
+        console.log(
+          `[Main] Invalidated stream cache for: ${trackName} - ${artistName} (ID: ${trackId})`,
+        );
+        return { success: true };
+      } catch (err) {
+        console.error("Failed to invalidate stream cache:", err);
+        return { success: false, error: String(err) };
+      }
     },
   );
 

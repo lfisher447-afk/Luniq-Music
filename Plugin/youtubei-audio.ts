@@ -11,8 +11,9 @@ interface CacheEntry {
   expiresAt: number;
 }
 
-const CACHE_TTL_MS = 30 * 60 * 1000;
+const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000;
 const MAX_CACHE_SIZE = 200;
+const STREAM_URL_EXPIRY_SAFETY_MS = 60 * 1000;
 
 export interface YoutubeiAudioConfig {
   useAlternativeCipher?: boolean;
@@ -46,6 +47,27 @@ function matchesDuration(
   return (
     Math.abs(candidateDurationSeconds - expectedDurationSeconds) <= tolerance
   );
+}
+
+function extractExpireTimestampMsFromUrl(url: string): number | null {
+  try {
+    const match = url.match(/[?&]expire=(\d+)/);
+    if (match && match[1]) {
+      const seconds = parseInt(match[1], 10);
+      if (!isNaN(seconds)) {
+        return seconds * 1000;
+      }
+    }
+  } catch {}
+  return null;
+}
+
+function calculateCacheExpiry(url: string): number {
+  const expireMs = extractExpireTimestampMsFromUrl(url);
+  if (expireMs) {
+    return Math.max(0, expireMs - STREAM_URL_EXPIRY_SAFETY_MS);
+  }
+  return Date.now() + DEFAULT_CACHE_TTL_MS;
 }
 
 function calculateScore(
@@ -161,6 +183,14 @@ export class YoutubeiAudio {
     return entry.url;
   }
 
+  invalidateCachedUrl(trackName: string, artistName: string, quality?: string, formatExt?: string): void {
+    const key = this.getCacheKey(trackName, artistName, quality, formatExt);
+    if (this.urlCache.has(key)) {
+      console.log(`[Youtubei] Invalidated cached URL for "${trackName}" by ${artistName}`);
+      this.urlCache.delete(key);
+    }
+  }
+
   private setCachedUrl(key: string, url: string): void {
     if (this.urlCache.size >= MAX_CACHE_SIZE) {
       const firstKey = this.urlCache.keys().next().value;
@@ -174,8 +204,49 @@ export class YoutubeiAudio {
 
     this.urlCache.set(key, {
       url,
-      expiresAt: Date.now() + CACHE_TTL_MS,
+      expiresAt: calculateCacheExpiry(url),
     });
+  }
+
+  private async fetchVideoInfoWithFallback(
+    yt: Innertube,
+    videoId: string,
+    signal?: AbortSignal,
+  ): Promise<any> {
+    const clients: Array<{ name: string; fetch: () => Promise<any> }> = [
+      { name: "TV", fetch: () => yt.getInfo(videoId, { client: "TV" as any }) },
+      { name: "IOS", fetch: () => yt.getInfo(videoId, { client: "IOS" as any }) },
+      { name: "IOS_MUSIC", fetch: () => yt.getInfo(videoId, { client: "IOS_MUSIC" as any }) },
+      { name: "ANDROID", fetch: () => yt.getInfo(videoId, { client: "ANDROID" as any }) },
+      { name: "ANDROID_MUSIC", fetch: () => yt.getInfo(videoId, { client: "ANDROID_MUSIC" as any }) },
+      { name: "ANDROID_VR", fetch: () => yt.getInfo(videoId, { client: "ANDROID_VR" as any }) },
+      { name: "TVHTML5", fetch: () => yt.getInfo(videoId, { client: "TVHTML5" as any }) },
+      { name: "WEB_REMIX", fetch: () => yt.music.getInfo(videoId) },
+      { name: "WEB", fetch: () => yt.getInfo(videoId, { client: "WEB" as any }) },
+      { name: "DEFAULT", fetch: () => yt.getInfo(videoId) },
+    ];
+
+    let videoInfo;
+    let lastError: any = null;
+    for (const client of clients) {
+      if (signal?.aborted) {
+        throw Object.assign(new Error("AbortError"), { name: "AbortError" });
+      }
+      try {
+        console.log(`[Youtubei] Fetching video info with ${client.name} client for ID: ${videoId}`);
+        videoInfo = await client.fetch();
+        if (videoInfo) break;
+      } catch (err) {
+        lastError = err;
+        console.warn(`[Youtubei] ${client.name} failed:`, err);
+      }
+    }
+
+    if (!videoInfo) {
+      throw lastError || new Error("All YouTube clients failed to fetch video info");
+    }
+
+    return videoInfo;
   }
 
   async getStreamUrl(
@@ -274,34 +345,7 @@ export class YoutubeiAudio {
       if (signal?.aborted)
         throw Object.assign(new Error("AbortError"), { name: "AbortError" });
 
-      let videoInfo;
-      try {
-        console.log(`[Youtubei] Fetching video info with TV client for ID: ${videoId}`);
-        videoInfo = await yt.getInfo(videoId, { client: "TV" });
-      } catch (tvErr) {
-        console.warn("[Youtubei] TV failed, trying IOS:", tvErr);
-        try {
-          videoInfo = await yt.getInfo(videoId, { client: "IOS" });
-        } catch (iosErr) {
-          console.warn("[Youtubei] IOS failed, trying ANDROID:", iosErr);
-          try {
-            videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
-          } catch (androidErr) {
-            console.warn("[Youtubei] ANDROID failed, trying WEB_REMIX:", androidErr);
-            try {
-              videoInfo = await yt.music.getInfo(videoId);
-            } catch (musicErr) {
-              console.warn("[Youtubei] WEB_REMIX failed, trying WEB:", musicErr);
-              try {
-                videoInfo = await yt.getInfo(videoId, { client: "WEB" });
-              } catch (webErr) {
-                console.warn("[Youtubei] WEB failed, using default:", webErr);
-                videoInfo = await yt.getInfo(videoId);
-              }
-            }
-          }
-        }
-      }
+      const videoInfo = await this.fetchVideoInfoWithFallback(yt, videoId, signal);
 
       if (signal?.aborted)
         throw Object.assign(new Error("AbortError"), { name: "AbortError" });
@@ -426,34 +470,7 @@ export class YoutubeiAudio {
       if (signal?.aborted)
         throw Object.assign(new Error("AbortError"), { name: "AbortError" });
 
-      let videoInfo;
-      try {
-        console.log(`[Youtubei] Fetching video info with TV client for ID: ${videoId}`);
-        videoInfo = await yt.getInfo(videoId, { client: "TV" });
-      } catch (tvErr) {
-        console.warn("[Youtubei] TV failed, trying IOS:", tvErr);
-        try {
-          videoInfo = await yt.getInfo(videoId, { client: "IOS" });
-        } catch (iosErr) {
-          console.warn("[Youtubei] IOS failed, trying ANDROID:", iosErr);
-          try {
-            videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
-          } catch (androidErr) {
-            console.warn("[Youtubei] ANDROID failed, trying WEB_REMIX:", androidErr);
-            try {
-              videoInfo = await yt.music.getInfo(videoId);
-            } catch (musicErr) {
-              console.warn("[Youtubei] WEB_REMIX failed, trying WEB:", musicErr);
-              try {
-                videoInfo = await yt.getInfo(videoId, { client: "WEB" });
-              } catch (webErr) {
-                console.warn("[Youtubei] WEB failed, using default:", webErr);
-                videoInfo = await yt.getInfo(videoId);
-              }
-            }
-          }
-        }
-      }
+      const videoInfo = await this.fetchVideoInfoWithFallback(yt, videoId, signal);
 
       if (signal?.aborted)
         throw Object.assign(new Error("AbortError"), { name: "AbortError" });

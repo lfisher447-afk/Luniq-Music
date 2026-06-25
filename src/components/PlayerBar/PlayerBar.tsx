@@ -369,6 +369,7 @@ const PlayerBar: React.FC<{
   const lastSavedTime = useRef(0);
   const activeTrackId = useRef<string | null>(null);
   const streamRetryCount = useRef(0);
+  const hasRetriedAfterError = useRef(false);
   const isRadioFetching = useRef(false);
   const progressTimeoutRef = useRef<number | null>(null);
 
@@ -649,80 +650,92 @@ const PlayerBar: React.FC<{
     }
   };
 
-  const fetchStreamUrl = React.useCallback(async () => {
-    if (!currentTrack) return;
-    const trackId = currentTrack.id;
+  const fetchStreamUrl = React.useCallback(
+    async (options: {
+      forceRefresh?: boolean;
+      preferFallback?: boolean;
+      skipPrefetch?: boolean;
+    } = {}) => {
+      if (!currentTrack) return;
+      const trackId = currentTrack.id;
+      const { forceRefresh = false, preferFallback = false, skipPrefetch = false } =
+        options;
 
-    
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    
-    const prefetched = prefetchMap[trackId];
-    const isStale = prefetched
-      ? Date.now() - prefetched.timestamp > 30 * 60 * 1000
-      : true;
-
-    if (prefetched && !isStale && streamRetryCount.current === 0) {
-      setStreamUrl(prefetched.url);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const url = await window.ipcRenderer.invoke(
-        "get-stream-url",
-        currentTrack.name,
-        currentTrack.artist,
-        trackId,
-        true,
-        "player",
-        currentTrack.durationMs || 0
-      );
-
-      if (controller.signal.aborted) return;
-
-      if (url && currentTrack?.id === trackId) {
-        setStreamUrl(url);
-      } else if (!url && currentTrack?.id === trackId) {
-        
-        if (streamRetryCount.current < 2) {
-          streamRetryCount.current += 1;
-          console.warn(
-            `[PlayerBar] Empty stream URL, retrying in 2s... (${streamRetryCount.current})`,
-          );
-          await new Promise((r) => setTimeout(r, 2000));
-          
-        } else {
-          console.error(
-            "[PlayerBar] Failed to get URL after retries, skipping.",
-          );
-          streamRetryCount.current = 0;
-          onNext();
-        }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
-    } catch (err) {
-      if (!controller.signal.aborted) {
-        console.error("Failed to get stream url", err);
-        
-        if (streamRetryCount.current < 2) {
-          streamRetryCount.current += 1;
-          await new Promise((r) => setTimeout(r, 2000));
-        } else {
-          onNext();
-        }
-      }
-    } finally {
-      if (currentTrack?.id === trackId) {
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      const prefetched = prefetchMap[trackId];
+      const isStale = prefetched
+        ? Date.now() - prefetched.timestamp > 30 * 60 * 1000
+        : true;
+
+      if (
+        prefetched &&
+        !isStale &&
+        streamRetryCount.current === 0 &&
+        !forceRefresh &&
+        !skipPrefetch
+      ) {
+        setStreamUrl(prefetched.url);
         setIsLoading(false);
+        return;
       }
-    }
-    
-  }, [currentTrack?.id, prefetchMap]); 
+
+      setIsLoading(true);
+      try {
+        const url = await window.ipcRenderer.invoke(
+          "get-stream-url",
+          currentTrack.name,
+          currentTrack.artist,
+          trackId,
+          true,
+          "player",
+          currentTrack.durationMs || 0,
+          forceRefresh,
+          preferFallback,
+        );
+
+        if (controller.signal.aborted) return;
+
+        if (url && currentTrack?.id === trackId) {
+          setStreamUrl(url);
+        } else if (!url && currentTrack?.id === trackId) {
+          if (streamRetryCount.current < 2) {
+            streamRetryCount.current += 1;
+            console.warn(
+              `[PlayerBar] Empty stream URL, retrying in 2s... (${streamRetryCount.current})`,
+            );
+            await new Promise((r) => setTimeout(r, 2000));
+          } else {
+            console.error(
+              "[PlayerBar] Failed to get URL after retries, skipping.",
+            );
+            streamRetryCount.current = 0;
+            onNext();
+          }
+        }
+      } catch (err) {
+        if (!controller.signal.aborted) {
+          console.error("Failed to get stream url", err);
+
+          if (streamRetryCount.current < 2) {
+            streamRetryCount.current += 1;
+            await new Promise((r) => setTimeout(r, 2000));
+          } else {
+            onNext();
+          }
+        }
+      } finally {
+        if (currentTrack?.id === trackId) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [currentTrack?.id, prefetchMap],
+  ); 
 
   
   useEffect(() => {
@@ -752,6 +765,7 @@ const PlayerBar: React.FC<{
       }
       activeTrackId.current = currentTrack.id;
       streamRetryCount.current = 0;
+      hasRetriedAfterError.current = false;
     }
 
     
@@ -1118,38 +1132,48 @@ const PlayerBar: React.FC<{
           const audio = e.target as HTMLAudioElement;
           const code = audio.error?.code;
           const message = audio.error?.message || "No error message";
-          
+
           if (code === 2 || code === 4) {
-            if (streamRetryCount.current < 2) {
-              streamRetryCount.current += 1;
+            if (!hasRetriedAfterError.current && currentTrack) {
+              hasRetriedAfterError.current = true;
+              streamRetryCount.current = 0;
               console.warn(
-                `[PlayerBar] Stream error (code ${code}, message: ${message}), retrying in 2s... attempt ${streamRetryCount.current}`,
+                `[PlayerBar] Stream error (code ${code}, message: ${message}), retrying with fresh URL + fallback...`,
               );
 
-              
               await new Promise((r) => setTimeout(r, 2000));
 
-              
-              
-              if (currentTrack && audio.currentTime > 1) {
-                window.ipcRenderer.invoke("clear-cache").catch(() => {});
-                window.ipcRenderer
-                  .invoke("cancel-stream", currentTrack.id, "player")
-                  .catch(() => {});
-              }
+              window.ipcRenderer
+                .invoke(
+                  "invalidate-stream-cache",
+                  currentTrack.name,
+                  currentTrack.artist,
+                  currentTrack.id,
+                )
+                .catch(() => {});
+              window.ipcRenderer
+                .invoke("cancel-stream", currentTrack.id, "player")
+                .catch(() => {});
+
               setStreamUrl(null);
+              fetchStreamUrl({
+                forceRefresh: true,
+                preferFallback: true,
+                skipPrefetch: true,
+              });
             } else {
               console.error(
-                `[PlayerBar] Stream failed (code ${code}, message: ${message}) after 2 retries, skipping track.`,
+                `[PlayerBar] Stream failed (code ${code}, message: ${message}) after retry, skipping track.`,
               );
               streamRetryCount.current = 0;
-              
+              hasRetriedAfterError.current = false;
               setTimeout(() => onNext(), 500);
             }
           }
         }}
         onLoadedMetadata={() => {
-          streamRetryCount.current = 0; 
+          streamRetryCount.current = 0;
+          hasRetriedAfterError.current = false;
           if (audioRef.current) {
             audioRef.current.volume = isMuted ? 0 : volume;
             setTrackDuration(audioRef.current.duration); 
