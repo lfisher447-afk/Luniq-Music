@@ -338,6 +338,19 @@ app.whenReady().then(async () => {
   createWindow();
   createTray();
   harvestYouTubeCookies();
+
+  // Permanently fix 403 errors from googlevideo.com
+  // YouTube's CDN checks Origin and Referer headers before serving audio.
+  // Electron doesn't send these by default, so we inject them for every CDN request.
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    { urls: ['*://*.googlevideo.com/*', '*://*.youtube.com/*'] },
+    (details, callback) => {
+      const headers = details.requestHeaders;
+      if (!headers['Origin']) headers['Origin'] = 'https://music.youtube.com';
+      if (!headers['Referer']) headers['Referer'] = 'https://music.youtube.com/';
+      callback({ requestHeaders: headers });
+    }
+  );
   
   
   const checkYtdlpUpdate = async (manual = false) => {
