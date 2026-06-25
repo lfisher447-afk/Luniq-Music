@@ -103,14 +103,19 @@ const LyricsView: React.FC = () => {
 
     useEffect(() => {
         if (isSynced && activeIndex !== -1 && scrollContainerRef.current) {
-            const activeEl = scrollContainerRef.current.querySelector(
+            const container = scrollContainerRef.current;
+            const activeEl = container.querySelector(
                 `[data-index="${activeIndex}"]`
             ) as HTMLElement;
             if (activeEl) {
-                activeEl.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+                const containerRect = container.getBoundingClientRect();
+                const elRect = activeEl.getBoundingClientRect();
+                const targetScrollTop =
+                    container.scrollTop +
+                    (elRect.top - containerRect.top) -
+                    containerRect.height / 2 +
+                    elRect.height / 2;
+                container.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
             }
         }
     }, [activeIndex, isSynced]);

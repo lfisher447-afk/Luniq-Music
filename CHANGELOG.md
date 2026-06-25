@@ -23,6 +23,7 @@ All notable changes to Lune will be documented in this file.
 
 #### Fixed
 - **Autoplay Queue Persistence:** The "Next in Autoplay" pool is now saved to local storage and restored on app restart. Previously it was lost every time the app closed.
+- **Lyrics Auto-Scroll Dragging Header:** Fixed a bug where the lyrics auto-scroll would pull the album art, track name, and close button upward along with the lyrics. Replaced `scrollIntoView` (which could scroll the whole overlay) with a scoped `scrollTo` call on the lyrics content container only.
 - **yt-dlp Binary Update Failure:** Fixed a bug where `yt-dlp.exe` could not update in production builds because it was locked inside the read-only `.asar` package. The binary is now correctly migrated to the user's local `AppData` directory upon launch, granting it full permissions to overwrite itself.
 - **Build Configuration Schema:** Suppressed false-positive IDE schema warnings in `electron-builder.json` by removing the outdated schema URL.
 - **Type Declaration Missing:** Restored Vite's client typings (`/// <reference types="vite/client" />`) in `vite-env.d.ts` to fix missing module errors for image assets in the IDE.
