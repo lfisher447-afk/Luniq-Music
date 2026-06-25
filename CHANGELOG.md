@@ -12,6 +12,7 @@ All notable changes to Lune will be documented in this file.
 - **Dual Engine Instantiation:** Both `youtubei.js` and `yt-dlp` engines are created at startup. The active engine is resolved on each stream/download request, so switching does not require an app restart.
 - **Engine Change Logs:** Console logs now report audio engine changes in both the renderer (`[Audio Engine] Switched to: ...`) and main process (`[Audio Engine] Active engine: ...`).
 - **Automatic Engine Fallback:** If the selected audio engine fails to resolve a stream or download, the app automatically retries with the opposite engine before giving up.
+- **Increased Prefetch Count:** The stream prefetcher now fetches the next 2 upcoming tracks in the background instead of 1, improving gapless playback reliability.
 - **New Audio Engine (youtubei.js):** Replaced the previous stream resolver with a fully native `youtubei.js`-powered audio engine. No external binaries required for stream resolution — faster, cleaner, and more reliable.
 - **YouTube + Spotify Integrated Universal Search:** Search now queries both YouTube Music and Spotify simultaneously, merging results into a single unified view with deduplication.
 - **Smarter Track Matching (ArchiveTune Algorithm):** The audio engine now selects the best YouTube video for a track using a multi-factor scoring system ported from ArchiveTune — tokenized title/artist coverage checks, strict duration filtering, and a weighted scoring system. No more accidental covers, karaoke, or wrong versions.

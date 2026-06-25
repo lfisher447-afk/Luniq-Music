@@ -262,10 +262,19 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (sessionIndex < sessionHistory.length - 1) {
         neighbors.push(sessionHistory[sessionIndex + 1]);
+        if (sessionIndex < sessionHistory.length - 2) {
+          neighbors.push(sessionHistory[sessionIndex + 2]);
+        }
       } else if (activeQueue.length > 0) {
         neighbors.push(activeQueue[0]);
+        if (activeQueue.length > 1) {
+          neighbors.push(activeQueue[1]);
+        }
       } else if (autoplayQueue.length > 0) {
         neighbors.push(autoplayQueue[0]);
+        if (autoplayQueue.length > 1) {
+          neighbors.push(autoplayQueue[1]);
+        }
       }
 
       const STALE_TIME = 30 * 60 * 1000;
