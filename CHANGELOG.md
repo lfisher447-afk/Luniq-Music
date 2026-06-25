@@ -30,7 +30,6 @@ All notable changes to Lune will be documented in this file.
 #### Changed
 - **Reliable yt-dlp Updater:** Completely rewrote the `yt-dlp` update mechanism. The app now directly queries the official GitHub API on every launch and downloads the newest binary release automatically, completely bypassing unreliable native updater commands.
 - **Cleaner Error Logging:** Silenced massive error stack traces in the console when `yt-dlp` is missing or when cache clears fail during a background download.
-- **Codebase Cleanup:** Automatically stripped all comments from the `src`, `electron`, and `Plugin` directories.
 - **Cache Invalidation Alignment:** `youtubei.js` and `yt-dlp` cache invalidation now targets the correct `webm` cache key, matching the engines' internal behavior.
 
 #### Fixed
