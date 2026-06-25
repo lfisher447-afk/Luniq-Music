@@ -14,6 +14,74 @@ interface CacheEntry {
 const CACHE_TTL_MS = 30 * 60 * 1000;
 const MAX_CACHE_SIZE = 200;
 
+export interface YoutubeiAudioConfig {
+  useAlternativeCipher?: boolean;
+}
+
+function matchTokens(str: string): Set<string> {
+  return new Set(
+    (str || "")
+      .toLowerCase()
+      .replace(/\([^)]*\)|\[[^\]]*\]|\{[^}]*\}/g, " ")
+      .replace(/[^a-z0-9]+/g, " ")
+      .split(" ")
+      .filter((t) => t.length > 0),
+  );
+}
+
+function tokenOverlap(left: string, right: string): number {
+  const leftTokens = Array.from(matchTokens(left));
+  if (leftTokens.length === 0) return 0;
+  const rightTokens = matchTokens(right);
+  return leftTokens.filter((t) => rightTokens.has(t)).length;
+}
+
+function matchesDuration(
+  candidateDurationSeconds: number,
+  expectedDurationSeconds: number,
+): boolean {
+  if (expectedDurationSeconds <= 0) return true;
+  if (candidateDurationSeconds <= 0) return true;
+  const tolerance = Math.max(15, (expectedDurationSeconds * 10) / 100);
+  return (
+    Math.abs(candidateDurationSeconds - expectedDurationSeconds) <= tolerance
+  );
+}
+
+function calculateScore(
+  candidate: any,
+  expectedTitle: string,
+  expectedArtist: string,
+  expectedDurationSeconds: number,
+): number {
+  const cTitle =
+    typeof candidate.title === "string"
+      ? candidate.title
+      : candidate.title?.text || "";
+  const cArtist =
+    typeof candidate.author === "string"
+      ? candidate.author
+      : candidate.author?.name || "";
+  const cDuration = candidate.duration?.seconds || 0;
+
+  const titleScore = tokenOverlap(expectedTitle, cTitle) * 4;
+
+  const artistScore = Math.max(
+    tokenOverlap(expectedArtist, cArtist),
+    tokenOverlap(expectedArtist, cTitle),
+  );
+
+  let durationScore = 0;
+  if (expectedDurationSeconds > 0 && cDuration > 0) {
+    durationScore = Math.max(
+      0,
+      20 - Math.abs(cDuration - expectedDurationSeconds),
+    );
+  }
+
+  return titleScore + artistScore * 3 + durationScore;
+}
+
 export class YoutubeiAudio {
   private youtube: Innertube | null = null;
   private initPromise: Promise<Innertube> | null = null;
@@ -117,6 +185,7 @@ export class YoutubeiAudio {
     formatExt?: string,
     signal?: AbortSignal,
     _isPriority = false,
+    durationMs: number = 0,
   ): Promise<string> {
     formatExt = "webm";
     const tName =
@@ -151,8 +220,52 @@ export class YoutubeiAudio {
         throw new Error(`No search results found for "${query}"`);
       }
 
-      const firstVideo = searchResults.videos[0];
-      const videoId = (firstVideo as any).id;
+      let bestVideo = searchResults.videos[0];
+      const expectedDurationSecs = Math.floor(durationMs / 1000);
+
+      if (expectedDurationSecs > 0 && searchResults.videos.length > 1) {
+        console.log(
+          `[Youtubei] Scoring ${searchResults.videos.length} candidates for "${tName}" by ${aName}...`,
+        );
+
+        let highestScore = -1;
+
+        for (const video of searchResults.videos) {
+          const cDuration = (video as any).duration?.seconds || 0;
+          if (!matchesDuration(cDuration, expectedDurationSecs)) {
+            continue; // Filter out candidates outside duration tolerance
+          }
+
+          const score = calculateScore(
+            video,
+            tName,
+            aName,
+            expectedDurationSecs,
+          );
+
+          if (score > highestScore) {
+            highestScore = score;
+            bestVideo = video;
+          }
+        }
+
+        if (highestScore === -1) {
+          console.warn(
+            `[Youtubei] All candidates failed duration/token checks. Falling back to first result.`,
+          );
+          bestVideo = searchResults.videos[0];
+        } else {
+          const bTitle =
+            typeof (bestVideo as any).title === "string"
+              ? (bestVideo as any).title
+              : (bestVideo as any).title?.text || "";
+          console.log(
+            `[Youtubei] Selected best match: "${bTitle}" with score ${highestScore}`,
+          );
+        }
+      }
+
+      const videoId = (bestVideo as any).id;
 
       if (!videoId) {
         throw new Error("Video ID not found in search result");
@@ -163,30 +276,29 @@ export class YoutubeiAudio {
 
       let videoInfo;
       try {
-        console.log(
-          `[Youtubei] Fetching video info with TV client for ID: ${videoId}`,
-        );
+        console.log(`[Youtubei] Fetching video info with TV client for ID: ${videoId}`);
         videoInfo = await yt.getInfo(videoId, { client: "TV" });
       } catch (tvErr) {
-        console.warn(
-          "[Youtubei] TV client getInfo failed, falling back to ANDROID:",
-          tvErr,
-        );
+        console.warn("[Youtubei] TV failed, trying IOS:", tvErr);
         try {
-          videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
-        } catch (androidErr) {
-          console.warn(
-            "[Youtubei] ANDROID client getInfo failed, falling back to WEB_REMIX (music):",
-            androidErr,
-          );
+          videoInfo = await yt.getInfo(videoId, { client: "IOS" });
+        } catch (iosErr) {
+          console.warn("[Youtubei] IOS failed, trying ANDROID:", iosErr);
           try {
-            videoInfo = await yt.music.getInfo(videoId);
-          } catch (musicErr) {
-            console.warn(
-              "[Youtubei] WEB_REMIX music info failed, falling back to default:",
-              musicErr,
-            );
-            videoInfo = await yt.getInfo(videoId);
+            videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
+          } catch (androidErr) {
+            console.warn("[Youtubei] ANDROID failed, trying WEB_REMIX:", androidErr);
+            try {
+              videoInfo = await yt.music.getInfo(videoId);
+            } catch (musicErr) {
+              console.warn("[Youtubei] WEB_REMIX failed, trying WEB:", musicErr);
+              try {
+                videoInfo = await yt.getInfo(videoId, { client: "WEB" });
+              } catch (webErr) {
+                console.warn("[Youtubei] WEB failed, using default:", webErr);
+                videoInfo = await yt.getInfo(videoId);
+              }
+            }
           }
         }
       }
@@ -316,30 +428,29 @@ export class YoutubeiAudio {
 
       let videoInfo;
       try {
-        console.log(
-          `[Youtubei] Fetching video info with TV client for ID: ${videoId}`,
-        );
+        console.log(`[Youtubei] Fetching video info with TV client for ID: ${videoId}`);
         videoInfo = await yt.getInfo(videoId, { client: "TV" });
       } catch (tvErr) {
-        console.warn(
-          "[Youtubei] TV client getInfo failed, falling back to ANDROID:",
-          tvErr,
-        );
+        console.warn("[Youtubei] TV failed, trying IOS:", tvErr);
         try {
-          videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
-        } catch (androidErr) {
-          console.warn(
-            "[Youtubei] ANDROID client getInfo failed, falling back to WEB_REMIX (music):",
-            androidErr,
-          );
+          videoInfo = await yt.getInfo(videoId, { client: "IOS" });
+        } catch (iosErr) {
+          console.warn("[Youtubei] IOS failed, trying ANDROID:", iosErr);
           try {
-            videoInfo = await yt.music.getInfo(videoId);
-          } catch (musicErr) {
-            console.warn(
-              "[Youtubei] WEB_REMIX music info failed, falling back to default:",
-              musicErr,
-            );
-            videoInfo = await yt.getInfo(videoId);
+            videoInfo = await yt.getInfo(videoId, { client: "ANDROID" });
+          } catch (androidErr) {
+            console.warn("[Youtubei] ANDROID failed, trying WEB_REMIX:", androidErr);
+            try {
+              videoInfo = await yt.music.getInfo(videoId);
+            } catch (musicErr) {
+              console.warn("[Youtubei] WEB_REMIX failed, trying WEB:", musicErr);
+              try {
+                videoInfo = await yt.getInfo(videoId, { client: "WEB" });
+              } catch (webErr) {
+                console.warn("[Youtubei] WEB failed, using default:", webErr);
+                videoInfo = await yt.getInfo(videoId);
+              }
+            }
           }
         }
       }

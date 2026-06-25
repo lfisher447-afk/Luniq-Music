@@ -681,6 +681,7 @@ const PlayerBar: React.FC<{
         trackId,
         true,
         "player",
+        currentTrack.durationMs || 0
       );
 
       if (controller.signal.aborted) return;

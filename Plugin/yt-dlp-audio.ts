@@ -360,10 +360,6 @@ export class YtDlpAudio {
         }
     }
 
-    /**
-     * Auto-update the underlying yt-dlp binary from GitHub.
-     * This prevents stream failures when YouTube changes its player signatures.
-     */
     async update(): Promise<string> {
         console.log('[YtDlp] 🔄 Checking for yt-dlp binary updates from GitHub...');
         try {

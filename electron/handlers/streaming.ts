@@ -65,6 +65,7 @@ export function registerStreamingHandlers() {
       trackId: string = "unknown",
       isPriority: boolean = false,
       requester: string = "unknown",
+      durationMs: number = 0,
     ) => {
       try {
         if (trackId && trackId !== "unknown" && db) {
@@ -106,6 +107,7 @@ export function registerStreamingHandlers() {
             audioFormat,
             controller.signal,
             isPriority,
+            durationMs,
           );
           search = { controller, promise, requesters: new Set() };
           activeSearches.set(trackId, search);

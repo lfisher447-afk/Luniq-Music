@@ -322,6 +322,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
             track.id,
             false,
             `prefetch-${track.id}`,
+            track.durationMs || 0
           );
           if (isCancelled) return;
           if (url) {
