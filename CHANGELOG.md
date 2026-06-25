@@ -16,7 +16,12 @@ All notable changes to Lune will be documented in this file.
 - **New Audio Engine (youtubei.js):** Replaced the previous stream resolver with a fully native `youtubei.js`-powered audio engine. No external binaries required for stream resolution — faster, cleaner, and more reliable.
 - **YouTube + Spotify Integrated Universal Search:** Search now queries both YouTube Music and Spotify simultaneously, merging results into a single unified view with deduplication.
 - **Smarter Track Matching (ArchiveTune Algorithm):** The audio engine now selects the best YouTube video for a track using a multi-factor scoring system ported from ArchiveTune — tokenized title/artist coverage checks, strict duration filtering, and a weighted scoring system. No more accidental covers, karaoke, or wrong versions.
-- **Extended Client Fallback Chain:** Stream resolution now attempts multiple YouTube clients in order before giving up: `TV → IOS → ANDROID → WEB_REMIX → WEB → default`. Drastically reduces playback failures.
+- **Extended Client Fallback Chain:** Stream resolution now attempts multiple YouTube clients in order before giving up: `TV → IOS → IOS_MUSIC → ANDROID → ANDROID_MUSIC → ANDROID_VR → TVHTML5 → WEB_REMIX → WEB → DEFAULT`. Drastically reduces playback failures.
+- **Smarter Stream URL Caching:** Stream URLs are now cached until their real `expire=` timestamp (minus a 60-second safety margin) instead of a fixed 30-minute TTL, preventing playback failures from stale URLs.
+- **Playback Error Recovery:** When a stream fails with `MEDIA_ELEMENT_ERROR`, the player now invalidates that track's cached URL, fetches a fresh URL, and automatically tries the fallback audio engine (`yt-dlp` ↔ `youtubei.js`) before skipping.
+- **One-Retry Guard:** A per-track retry guard prevents infinite error loops — if recovery fails once, the track is skipped.
+- **Stream URL HEAD Validation:** Before returning a stream URL, the main process sends a `HEAD` request to verify it responds with 2xx. If it returns 403/404/410, the URL is rejected and the next engine/client is tried.
+- **Per-Track Cache Invalidation:** New `invalidate-stream-cache` IPC handler clears the cached stream URL for a specific track across both audio engines.
 - **Autoplay Queue UI:** Queue panel now shows a dedicated "Next in Autoplay" section below the regular queue (Spotify-style), with a live loading indicator while the radio pool is being filled.
 
 ### Bug Fixes & Code Cleanup
@@ -25,6 +30,7 @@ All notable changes to Lune will be documented in this file.
 - **Reliable yt-dlp Updater:** Completely rewrote the `yt-dlp` update mechanism. The app now directly queries the official GitHub API on every launch and downloads the newest binary release automatically, completely bypassing unreliable native updater commands.
 - **Cleaner Error Logging:** Silenced massive error stack traces in the console when `yt-dlp` is missing or when cache clears fail during a background download.
 - **Codebase Cleanup:** Automatically stripped all comments from the `src`, `electron`, and `Plugin` directories.
+- **Cache Invalidation Alignment:** `youtubei.js` and `yt-dlp` cache invalidation now targets the correct `webm` cache key, matching the engines' internal behavior.
 
 #### Fixed
 - **Autoplay Queue Persistence:** The "Next in Autoplay" pool is now saved to local storage and restored on app restart. Previously it was lost every time the app closed.
