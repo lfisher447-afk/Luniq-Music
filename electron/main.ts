@@ -224,10 +224,15 @@ function getThumbbarIconPath(name: string) {
     : path.join(app.getAppPath(), 'src', 'assets', 'thumbar', `${name}.png`);
 }
 
-function setThumbbar(isPlaying: boolean) {
+function setThumbbar(isPlaying: boolean, hasTrack: boolean = false) {
   if (!win || process.platform !== 'win32') return;
 
   try {
+    if (!hasTrack) {
+      win.setThumbarButtons([]);
+      return;
+    }
+
     const getIcon = (name: string) => {
       const p = getThumbbarIconPath(name);
       if (fs.existsSync(p)) {
@@ -268,9 +273,14 @@ function setThumbbar(isPlaying: boolean) {
 
 let thumbarDebounce: ReturnType<typeof setTimeout> | null = null;
 
-ipcMain.on('thumbar-update', (_event, isPlaying: boolean) => {
+ipcMain.on('thumbar-update', (_event, payload: any) => {
   if (thumbarDebounce) clearTimeout(thumbarDebounce);
-  thumbarDebounce = setTimeout(() => setThumbbar(isPlaying), 150);
+  
+  if (typeof payload === 'boolean') {
+    thumbarDebounce = setTimeout(() => setThumbbar(payload, true), 150);
+  } else {
+    thumbarDebounce = setTimeout(() => setThumbbar(payload.isPlaying, payload.hasTrack), 150);
+  }
 });
 
 

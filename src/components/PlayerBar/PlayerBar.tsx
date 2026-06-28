@@ -900,8 +900,8 @@ const PlayerBar: React.FC<{
 
   
   useEffect(() => {
-    window.ipcRenderer?.send("thumbar-update", isPlaying);
-  }, [isPlaying, currentTrack?.id]);
+    window.ipcRenderer?.send("thumbar-update", { isPlaying, hasTrack: !!currentTrack });
+  }, [isPlaying, !!currentTrack]);
 
   useEffect(() => {
     const handleRestart = (e: Event) => {
