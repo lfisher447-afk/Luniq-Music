@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater'
 import * as nodeUrl from 'node:url'
 import path from 'node:path'
 import { Readable } from 'node:stream';
+import os from 'node:os';
 import fs from 'fs';
 import { execFile } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -346,6 +347,32 @@ app.whenReady().then(async () => {
   if (process.platform === 'win32') {
     app.setAppUserModelId('com.lune.app'); 
   }
+  
+  const cleanPyInstallerTempFolders = async () => {
+      try {
+          const tmpDir = os.tmpdir();
+          const files = await fs.promises.readdir(tmpDir);
+          let count = 0;
+          for (const file of files) {
+              if (file.startsWith('_MEI')) {
+                  const fullPath = path.join(tmpDir, file);
+                  try {
+                      const stats = await fs.promises.stat(fullPath);
+                      if (Date.now() - stats.mtimeMs > 60 * 60 * 1000) {
+                          await fs.promises.rm(fullPath, { recursive: true, force: true });
+                          count++;
+                      }
+                  } catch (e) {
+                  }
+              }
+          }
+          if (count > 0) console.log(`[Main] Cleaned up ${count} orphaned PyInstaller (_MEI) folders.`);
+      } catch (err) {
+          console.warn('[Main] Error cleaning PyInstaller folders:', err);
+      }
+  };
+  cleanPyInstallerTempFolders();
+
   registerAllHandlers();
   createWindow();
   createTray();
