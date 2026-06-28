@@ -23,6 +23,8 @@ All notable changes to Lune will be documented in this file.
 - **Playback Error Recovery:** When a stream fails with `MEDIA_ELEMENT_ERROR`, the player now invalidates that track's cached URL, fetches a fresh URL, and automatically tries the fallback audio engine (`yt-dlp` ↔ `youtubei.js`) before skipping.
 - **One-Retry Guard:** A per-track retry guard prevents infinite error loops — if recovery fails once, the track is skipped.
 - **Stream URL HEAD Validation:** Before returning a stream URL, the main process sends a `HEAD` request to verify it responds with 2xx. If it returns 403/404/410, the URL is rejected and the next engine/client is tried.
+- **Fixed `403 Forbidden` Playback Skips:** Completely resolved an issue where YouTube streams would skip with a 403 error during playback. `youtubei.js` and `yt-dlp` now embed their exact client type and precise `User-Agent` string into the stream URLs they generate, allowing the main process interceptor to accurately spoof the exact User-Agent YouTube's `poToken` anti-bot system expects for that specific client.
+- **Fixed Radio Track Suggestions:** Replaced the broken internal `radio-apollo` GraphQL implementation with ArchiveTune's reliable REST API (`api.spotify.com/v1/recommendations`) fallback. Radio stations and infinite playback now fetch suggestions perfectly again.
 - **Per-Track Cache Invalidation:** New `invalidate-stream-cache` IPC handler clears the cached stream URL for a specific track across both audio engines.
 - **Autoplay Queue UI:** Queue panel now shows a dedicated "Next in Autoplay" section below the regular queue (Spotify-style), with a live loading indicator while the radio pool is being filled.
 
