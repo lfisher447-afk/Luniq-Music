@@ -8,6 +8,7 @@ All notable changes to Lune will be documented in this file.
 
 #### Added
 
+- **Spotify History Sync (GQL):** The app now automatically syncs your remote Spotify "Recently Played" history into the Queue's History tab using GraphQL, intelligently parsing and mapping Context items into tracks without hitting strict REST API rate limits (HTTP 429).
 - **Audio Engine Selector:** Added a dropdown in Playback settings to switch between `youtubei.js` and `yt-dlp` audio backends. The selected engine is persisted and applied to streaming, downloads, and cache clearing.
 - **Dual Engine Instantiation:** Both `youtubei.js` and `yt-dlp` engines are created at startup. The active engine is resolved on each stream/download request, so switching does not require an app restart.
 - **Engine Change Logs:** Console logs now report audio engine changes in both the renderer (`[Audio Engine] Switched to: ...`) and main process (`[Audio Engine] Active engine: ...`).
@@ -27,6 +28,8 @@ All notable changes to Lune will be documented in this file.
 - **Autoplay Queue UI:** Queue panel now shows a dedicated "Next in Autoplay" section below the regular queue (Spotify-style), with a live loading indicator while the radio pool is being filled.
 
 #### Changed
+
+- **Home Screen Cleanup:** Hid the "Recently played" section from the main Home page browse grid, as it's now properly integrated into the Queue History tab.
 - **Login UI Polish:** Refined the "Connect with Spotify" button on the Login page. Replaced the older dark green icon with Spotify's modern lighter green (`#1ed760`) and added a subtle, soft drop-shadow for better contrast against dark backgrounds.
 - **Login Localization:** Updated the Spotify connection prompt from "Continue with Spotify" to "Connect with Spotify" across all 20 supported languages.
 - **Reliable yt-dlp Updater:** Completely rewrote the `yt-dlp` update mechanism. The app now directly queries the official GitHub API on every launch and downloads the newest binary release automatically, completely bypassing unreliable native updater commands.
@@ -34,6 +37,7 @@ All notable changes to Lune will be documented in this file.
 - **Cache Invalidation Alignment:** `youtubei.js` and `yt-dlp` cache invalidation now targets the correct `webm` cache key, matching the engines' internal behavior.
 
 #### Fixed
+
 - **Fixed Taskbar Controls Display:** The Windows taskbar thumbnail controls (Play/Pause/Skip) are now properly hidden on the Login and Home pages, and will only appear when a track is actively loaded into the player.
 - **Fixed `403 Forbidden` Playback Skips:** Completely resolved an issue where YouTube streams would skip with a 403 error during playback. `youtubei.js` and `yt-dlp` now embed their exact client type and precise `User-Agent` string into the stream URLs they generate, allowing the main process interceptor to accurately spoof the exact User-Agent YouTube's `poToken` anti-bot system expects for that specific client.
 - **Fixed Radio Track Suggestions:** Replaced the broken internal `radio-apollo` GraphQL implementation with ArchiveTune's reliable REST API (`api.spotify.com/v1/recommendations`) fallback. Radio stations and infinite playback now fetch suggestions perfectly again.
@@ -94,7 +98,6 @@ This release is a major under-the-hood upgrade focused on audio quality, rich pr
 - **CPU Drain on Normalization:** The normalization interval is now properly cleaned up when normalization is disabled or the track is paused, stopping a background polling loop that ran indefinitely.
 
 ## [1.0.3] - 2026-03-14
-
 
 ### Self-Healing Authentication & Session Resiliency
 

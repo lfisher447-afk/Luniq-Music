@@ -363,7 +363,7 @@ const Home = ({ accessToken: _accessToken, cookies, onPlaylistSelect, onTrackVie
                         </button>
                     </div>
                 )}
-                {sections.filter(s => s.items.length > 0 && s.title && !s.title.toLowerCase().includes("unknown")).map((section, index) => {
+                {sections.filter(s => s.items.length > 0 && s.title && !s.title.toLowerCase().includes("unknown") && !s.title.toLowerCase().includes("recently")).map((section, index) => {
                     const isSixPack = index === 0;
                     const displayTitle = section.title || (isSixPack ? t('home.jumpBackIn') : t('home.recommended'));
                     return (
