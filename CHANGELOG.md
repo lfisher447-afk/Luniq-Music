@@ -42,6 +42,8 @@ All notable changes to Lune will be documented in this file.
 - **yt-dlp Binary Update Failure:** Fixed a bug where `yt-dlp.exe` could not update in production builds because it was locked inside the read-only `.asar` package. The binary is now correctly migrated to the user's local `AppData` directory upon launch, granting it full permissions to overwrite itself.
 - **Build Configuration Schema:** Suppressed false-positive IDE schema warnings in `electron-builder.json` by removing the outdated schema URL.
 - **Type Declaration Missing:** Restored Vite's client typings (`/// <reference types="vite/client" />`) in `vite-env.d.ts` to fix missing module errors for image assets in the IDE.
+- **Spotify Auth Popup Improvements:** The Spotify sign-in popup now displays the correct Lune app icon and title. The flow also bypasses the "Download Spotify" trap page by instantly detecting the auth cookie upon a successful login or signup and closing automatically.
+- **Disabled Google Sign-In:** The "Continue with Google" button on the Spotify login page has been greyed out and disabled since social login flows are not officially supported within the app's embedded auth window.
 
 ### Security
 
