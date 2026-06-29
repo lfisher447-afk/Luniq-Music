@@ -8,6 +8,8 @@ All notable changes to Lune will be documented in this file.
 
 #### Added
 
+- **Local HTTP Stream Proxy:** Implemented a local HTTP media streaming proxy in Electron that intercepts chunk requests, dynamically sets client-specific User-Agents, and routes stream data cleanly using Node's HTTP/1.1 fetch stack to bypass Chromium's HTTP/2 restriction.
+- **Proxy connection auto-abort:** Tied an `AbortController` to the proxy's client connection close events, preventing background fetch threads from hanging or wasting bandwidth when seeking or skipping tracks.
 - **Spotify History Sync (GQL):** The app now automatically syncs your remote Spotify "Recently Played" history into the Queue's History tab using GraphQL, intelligently parsing and mapping Context items into tracks without hitting strict REST API rate limits (HTTP 429).
 - **Audio Engine Selector:** Added a dropdown in Playback settings to switch between `youtubei.js` and `yt-dlp` audio backends. The selected engine is persisted and applied to streaming, downloads, and cache clearing.
 - **Dual Engine Instantiation:** Both `youtubei.js` and `yt-dlp` engines are created at startup. The active engine is resolved on each stream/download request, so switching does not require an app restart.
@@ -39,8 +41,12 @@ All notable changes to Lune will be documented in this file.
 - **Default Audio Quality:** Increased the default audio streaming and download quality for new installations to `320 kbps` (previously `256 kbps` and `128 kbps`).
 - **Dynamic Home Greeting:** The Home page greeting now dynamically adjusts based on the local time (Good Morning/Afternoon/Evening) and includes the connected user's Spotify display name.
 - **Standardized Menus:** Unified the design of all dropdown and context menus across the app (Equalizer, 3-dots, Sleep Timer, Sidebar context menus) to use a consistent solid dark `#181818` background theme.
+
 #### Fixed
 
+- **Fixed Anonymous Google Video Range Block:** Resolved the issue where Google Video Server rejected offset range requests past 1MB with a `403 Forbidden` for anonymous clients. Prioritized the `"ANDROID_VR"` client, which natively supports offset range requests past 1MB without requiring cookies or active session verification.
+- **Suppressed Chromium Media Encoder Errors:** Appended the `'log-level'` switch (set to `'3'`) on Electron startup to fully suppress internal Chromium-native D3D device encoder error logs (`0xC00D6D76`) from the developer console.
+- **Fixed console-message Deprecation Warning:** Updated the `'console-message'` webContents event listener structure to conform to Electron 30+, eliminating compiler type conflicts and console deprecation warnings.
 - **Fixed Taskbar Controls Display:** The Windows taskbar thumbnail controls (Play/Pause/Skip) are now properly hidden on the Login and Home pages, and will only appear when a track is actively loaded into the player.
 - **Fixed `403 Forbidden` Playback Skips:** Completely resolved an issue where YouTube streams would skip with a 403 error during playback. `youtubei.js` and `yt-dlp` now embed their exact client type and precise `User-Agent` string into the stream URLs they generate, allowing the main process interceptor to accurately spoof the exact User-Agent YouTube's `poToken` anti-bot system expects for that specific client.
 - **Fixed Radio Track Suggestions:** Replaced the broken internal `radio-apollo` GraphQL implementation with ArchiveTune's reliable REST API (`api.spotify.com/v1/recommendations`) fallback. Radio stations and infinite playback now fetch suggestions perfectly again.
