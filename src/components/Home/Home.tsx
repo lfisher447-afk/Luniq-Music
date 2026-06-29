@@ -45,12 +45,31 @@ const Home = ({ accessToken: _accessToken, cookies, onPlaylistSelect, onTrackVie
 
     const api = useApi();
 
+    const [userName, setUserName] = useState<string>('');
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const profile = await api.user.me();
+                if (profile?.display_name) {
+                    setUserName(profile.display_name);
+                }
+            } catch (err) {
+                console.error('Failed to fetch user profile for greeting:', err);
+            }
+        };
+        fetchUser();
+    }, [api]);
+
     const greeting = useMemo(() => {
         const hour = new Date().getHours();
-        if (hour < 12) return t('home.goodMorning');
-        if (hour < 18) return t('home.goodAfternoon');
-        return t('home.goodEvening');
-    }, [t]);
+        let base = '';
+        if (hour < 12) base = t('home.goodMorning');
+        else if (hour < 18) base = t('home.goodAfternoon');
+        else base = t('home.goodEvening');
+        
+        return userName ? `${base}, ${userName}` : base;
+    }, [t, userName]);
 
     const fetchHomeData = async () => {
         try {

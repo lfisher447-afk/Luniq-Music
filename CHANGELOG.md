@@ -35,6 +35,8 @@ All notable changes to Lune will be documented in this file.
 - **Reliable yt-dlp Updater:** Completely rewrote the `yt-dlp` update mechanism. The app now directly queries the official GitHub API on every launch and downloads the newest binary release automatically, completely bypassing unreliable native updater commands.
 - **Cleaner Error Logging:** Silenced massive error stack traces in the console when `yt-dlp` is missing or when cache clears fail during a background download.
 - **Cache Invalidation Alignment:** `youtubei.js` and `yt-dlp` cache invalidation now targets the correct `webm` cache key, matching the engines' internal behavior.
+- **Default Audio Quality:** Increased the default audio streaming and download quality for new installations to `320 kbps` (previously `256 kbps` and `128 kbps`).
+- **Dynamic Home Greeting:** The Home page greeting now dynamically adjusts based on the local time (Good Morning/Afternoon/Evening) and includes the connected user's Spotify display name.
 
 #### Fixed
 
@@ -49,6 +51,7 @@ All notable changes to Lune will be documented in this file.
 - **Spotify Auth Popup Improvements:** The Spotify sign-in popup now displays the correct Lune app icon and title. The flow also bypasses the "Download Spotify" trap page by instantly detecting the auth cookie upon a successful login or signup and closing automatically.
 - **Disabled Google Sign-In:** The "Continue with Google" button on the Spotify login page has been greyed out and disabled since social login flows are not officially supported within the app's embedded auth window.
 - **Fixed `yt-dlp` PyInstaller Extraction Errors:** Added a startup cleanup script that automatically deletes stale `_MEI` folders left behind by `yt-dlp` in the system's temporary directory. This prevents the `return code -3` extraction failure caused by lingering files or corrupted temp caches.
+- **Fixed Auto-Skip on Re-Play:** Fixed a bug where clicking "Play" on a track that was already in the process of loading would mistakenly cancel the ongoing stream request, causing a stream error and forcing the player to auto-skip to the next song.
 
 ### Security
 

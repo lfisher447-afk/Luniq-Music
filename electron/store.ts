@@ -52,7 +52,7 @@ export const schema = {
             y: { type: 'number' }
         }
     },
-    audioQuality: { type: 'string', default: '256' },
+    audioQuality: { type: 'string', default: '320' },
     downloadQuality: { type: 'string', default: '320' },
     audioEngine: { type: 'string', default: 'youtubei' },
     downloadLocation: { type: 'string' },

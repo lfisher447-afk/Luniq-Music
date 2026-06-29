@@ -42,8 +42,8 @@ interface PlaybackContextType {
 const PlaybackContext = createContext<PlaybackContextType | undefined>(undefined);
 
 export const PlaybackProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [audioQuality, setAudioQualityState] = useState<AudioQuality>('128');
-  const [downloadQuality, setDownloadQualityState] = useState<DownloadQuality>('256');
+  const [audioQuality, setAudioQualityState] = useState<AudioQuality>('320');
+  const [downloadQuality, setDownloadQualityState] = useState<DownloadQuality>('320');
   const [audioEngine, setAudioEngineState] = useState<AudioEngine>('youtubei');
   const [audioFormat, setAudioFormatState] = useState<AudioFormat>('mp4');
   const [downloadFormat, setDownloadFormatState] = useState<DownloadFormat>('mp4');

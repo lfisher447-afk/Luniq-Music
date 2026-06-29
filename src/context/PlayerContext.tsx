@@ -413,13 +413,13 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     playlistTracks?: any[],
     navType: "manual" | "next" | "prev" | "loop-restart" = "manual",
   ) => {
-    if (currentTrack?.id) {
+    const formattedTrack = formatTrackForPlayer(track);
+
+    if (currentTrack?.id && currentTrack.id !== formattedTrack.id) {
       window.ipcRenderer
         .invoke("cancel-stream", currentTrack.id, "player")
         .catch(() => {});
     }
-
-    const formattedTrack = formatTrackForPlayer(track);
 
     setHistory((prev) => {
       const filtered = prev.filter((t) => t.id !== formattedTrack.id);
