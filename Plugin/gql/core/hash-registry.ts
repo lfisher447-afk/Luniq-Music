@@ -31,10 +31,10 @@ async function fetchRemoteHashes(): Promise<HashStore> {
             const data: HashStore = await res.json();
             cachedHashes = data;
             lastFetchedAt = Date.now();
-            console.log("[HashRegistry] ✅ Remote hashes loaded successfully");
+            console.log("[HashRegistry] Remote hashes loaded successfully");
             return data;
         } catch (err) {
-            console.error("[HashRegistry] ❌ Failed to fetch remote hashes:", err);
+            console.error("[HashRegistry] Failed to fetch remote hashes:", err);
             if (cachedHashes) {
                 console.warn("[HashRegistry] Using previously cached hashes");
                 return cachedHashes;

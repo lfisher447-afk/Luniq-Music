@@ -445,7 +445,7 @@ const PlayerBar: React.FC<{
 
           const filteredTracks = randomized.filter((t) => !recentIds.has(t.id));
           logToSystem(
-            `[Radio Pool] 🧹 Filtered pool: ${filteredTracks.length} unique tracks remaining.`,
+            `[Radio Pool] Filtered pool: ${filteredTracks.length} unique tracks remaining.`,
           );
 
           const varietyTracks: LuneTrack[] = [];
@@ -476,7 +476,7 @@ const PlayerBar: React.FC<{
 
           const poolTracks = validTracks.slice(0, 15);
           logToSystem(
-            `[Radio Pool] ✅ Appended ${poolTracks.length} tracks. First up: "${poolTracks[0]?.name}"`,
+            `[Radio Pool] Appended ${poolTracks.length} tracks. First up: "${poolTracks[0]?.name}"`,
           );
 
           if (!ignorePoolFetch) {

@@ -183,7 +183,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     setPrefetchMap({});
     window.ipcRenderer.invoke("clear-cache").catch(() => {});
     console.log(
-      "[PlayerContext] 🧹 Quality settings changed, clearing prefetch cache.",
+      "[PlayerContext] Quality settings changed, clearing prefetch cache.",
     );
   }, [lowDataMode, audioQuality, audioFormat]);
 
@@ -322,7 +322,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
         try {
           logToSystem(
-            `[Prefetch] 🛰️ Fetching neighbor: "${track.name}" (${track.id})`,
+            `[Prefetch] Fetching neighbor: "${track.name}" (${track.id})`,
           );
           const url = await window.ipcRenderer.invoke(
             "get-stream-url",
@@ -346,7 +346,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
               );
               return Object.fromEntries(entries.slice(0, 5));
             });
-            logToSystem(`[Prefetch] ✅ Cached: "${track.name}"`);
+            logToSystem(`[Prefetch] Cached: "${track.name}"`);
 
                                             
             fetchLyrics(

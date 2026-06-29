@@ -117,153 +117,72 @@ export const fetchLyrics = async (
     console.warn("[Lyrics] Failed to read from localStorage cache:", e);
   }
 
+  const startTime = performance.now();
+  let data = null;
+
   try {
-                                           
-    console.log(
-      `[Lyrics] Trying Native Spotify for: ${cleanTrackName} by ${primaryArtist}`,
-    );
-    let data = await fetchSpotifyLyrics(
-      cleanTrackName,
-      primaryArtist,
-      duration,
-      albumName,
-    );
+    data = await fetchSpotifyLyrics(cleanTrackName, primaryArtist, duration, albumName);
     if (data) {
-      console.log(`[Lyrics] Native Spotify matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via Spotify in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
       return data;
     }
 
-    console.log(
-      `[Lyrics] Native Spotify failed, trying BetterLyrics fallback for: ${cleanTrackName} by ${primaryArtist}`,
-    );
-    data = await fetchBetterLyrics(
-      cleanTrackName,
-      primaryArtist,
-      duration,
-      albumName,
-    );
+    data = await fetchBetterLyrics(cleanTrackName, primaryArtist, duration, albumName);
     if (data) {
-      console.log(`[Lyrics] BetterLyrics matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via BetterLyrics in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
       return data;
     }
 
-    console.log(
-      `[Lyrics] BetterLyrics failed, trying Paxsenix (Apple Music) fallback for: ${cleanTrackName} by ${primaryArtist}`,
-    );
-    data = await fetchPaxsenixLyrics(
-      cleanTrackName,
-      primaryArtist,
-      duration,
-      albumName,
-    );
+    data = await fetchPaxsenixLyrics(cleanTrackName, primaryArtist, duration, albumName);
     if (data) {
-      console.log(`[Lyrics] Paxsenix matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via Paxsenix in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
       return data;
     }
 
-    console.log(
-      `[Lyrics] Paxsenix (Apple Music) failed, trying LRCLib fallback for: ${cleanTrackName} by ${primaryArtist}`,
-    );
     data = await fetchLrcLibLyrics(cleanTrackName, primaryArtist, duration);
     if (data) {
-      console.log(`[Lyrics] LRCLib matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via LRCLib in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
       return data;
     }
 
-    console.log(
-      `[Lyrics] LRCLib failed, trying KuGou fallback for: ${cleanTrackName} by ${primaryArtist}`,
-    );
-    data = await fetchKugouLyrics(
-      cleanTrackName,
-      primaryArtist,
-      duration,
-      albumName,
-    );
+    data = await fetchKugouLyrics(cleanTrackName, primaryArtist, duration, albumName);
     if (data) {
-      console.log(`[Lyrics] KuGou matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via KuGou in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
+      return data;
     }
 
-    console.log(
-      `[Lyrics] KuGou failed, trying Unison fallback for: ${cleanTrackName} by ${primaryArtist}`,
-    );
-    data = await fetchUnisonLyrics(
-      cleanTrackName,
-      primaryArtist,
-      videoId,
-      duration,
-      albumName,
-    );
+    data = await fetchUnisonLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName);
     if (data) {
-      console.log(`[Lyrics] Unison matched successfully.`);
+      console.log(`[Lyrics] Resolved "${cleanTrackName}" via Unison in ${Math.round(performance.now() - startTime)}ms`);
       data = ensureRomanized(data);
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify(data));
-      } catch (e) {
-        console.warn("[Lyrics] Failed to save to cache:", e);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
       return data;
     }
 
     if (videoId) {
-      console.log(
-        `[Lyrics] Unison failed, trying SimpMusic fallback for: ${cleanTrackName} (Video ID: ${videoId})`,
-      );
-      data = await fetchSimpMusicLyrics(
-        cleanTrackName,
-        primaryArtist,
-        videoId,
-        duration,
-        albumName,
-      );
+      data = await fetchSimpMusicLyrics(cleanTrackName, primaryArtist, videoId, duration, albumName);
       if (data) {
-        console.log(`[Lyrics] SimpMusic matched successfully.`);
+        console.log(`[Lyrics] Resolved "${cleanTrackName}" via SimpMusic in ${Math.round(performance.now() - startTime)}ms`);
         data = ensureRomanized(data);
-        try {
-          localStorage.setItem(cacheKey, JSON.stringify(data));
-        } catch (e) {
-          console.warn("[Lyrics] Failed to save to cache:", e);
-        }
+        try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
         return data;
       }
     }
 
+    console.log(`[Lyrics] No lyrics found for "${cleanTrackName}" by ${primaryArtist} (checked all fallbacks in ${Math.round(performance.now() - startTime)}ms)`);
     try {
-      localStorage.setItem(
-        cacheKey,
-        JSON.stringify({ empty: true, timestamp: Date.now() }),
-      );
+      localStorage.setItem(cacheKey, JSON.stringify({ empty: true, timestamp: Date.now() }));
     } catch (e) {}
-
     return null;
   } catch (error) {
     console.error("[Lyrics] Error in fetchLyrics coordinator:", error);

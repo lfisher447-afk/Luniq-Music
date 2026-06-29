@@ -69,6 +69,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Promise Rejection at:', promise, 'reason:', reason);
 });
 
+
 protocol.registerSchemesAsPrivileged([
   { scheme: 'lune-local', privileges: { bypassCSP: true, stream: true, secure: true, standard: true, supportFetchAPI: true } }
 ]);
@@ -134,12 +135,30 @@ if (!gotTheLock) {
     },
   })
 
-  win.webContents.on('console-message', (_event, details: any) => {
-    if (details.message.includes('Electron Security Warning')) return;
-    if (details.level >= 2) { 
+  win.webContents.on('console-message', (_event: any, ...args: any[]) => {
+    let level: number = 0;
+    let message: string = '';
+    let line: number = 0;
+    let sourceId: string = '';
+
+    if (args.length === 1 && args[0] && typeof args[0] === 'object') {
+      const details = args[0];
+      level = details.level;
+      message = details.message || '';
+      line = details.lineNumber || 0;
+      sourceId = details.sourceId || '';
+    } else {
+      level = typeof args[0] === 'number' ? args[0] : 0;
+      message = typeof args[1] === 'string' ? args[1] : '';
+      line = typeof args[2] === 'number' ? args[2] : 0;
+      sourceId = typeof args[3] === 'string' ? args[3] : '';
+    }
+
+    if (message && message.includes('Electron Security Warning')) return;
+    if (level >= 2) { 
       const levels = ['debug', 'info', 'warn', 'error'];
-      const levelStr = levels[details.level] || 'log';
-      console.log(`[Renderer] [${levelStr.toUpperCase()}] ${details.message} (${path.basename(details.sourceId)}:${details.lineNumber})`);
+      const levelStr = levels[level] || 'log';
+      console.log(`[Renderer] [${levelStr.toUpperCase()}] ${message} (${path.basename(sourceId)}:${line})`);
     }
   });
 
@@ -691,7 +710,7 @@ app.whenReady().then(async () => {
         if (clientName === 'ANDROID_MUSIC') {
           resolvedUserAgent = 'com.google.android.youtube.music/5.34.51 (Linux; U; Android 12; en_US) gzip';
         } else if (clientName === 'ANDROID_VR') {
-          resolvedUserAgent = 'com.google.android.apps.youtube.vr.oculus/1.65.10 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1) gzip';
+          resolvedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
         } else {
           resolvedUserAgent = 'com.google.android.youtube/21.03.36(Linux; U; Android 16; en_US; SM-S908E Build/TP1A.220624.014) gzip';
         }

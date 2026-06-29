@@ -299,12 +299,6 @@ export class YoutubeiAudio {
       });
 
       const format = filtered[0];
-      if (format) {
-        const selectedCodec = extractCodec(format.mime_type);
-        console.log(
-          `[Youtubei] Selected format: ${format.mime_type}, codec: ${selectedCodec || "unknown"}`,
-        );
-      }
       return format;
     } catch (err) {
       console.warn(
@@ -336,7 +330,6 @@ export class YoutubeiAudio {
 
       let videoInfo;
       try {
-        console.log(`[Youtubei] Trying stream client ${client} for ${videoId}`);
         videoInfo = await this.getInfoWithClient(yt, videoId, client);
       } catch (err) {
         lastError = err;
@@ -375,7 +368,6 @@ function getClientUserAgent(client: StreamClient): string {
     case "MWEB":
       return "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1";
     case "ANDROID":
-    case "ANDROID_VR":
     case "YTMUSIC_ANDROID":
       return "com.google.android.youtube/19.05.36 (Linux; U; Android 11; GMT)";
     case "IOS":
@@ -393,9 +385,6 @@ function getClientUserAgent(client: StreamClient): string {
         url += `&__lune_ua=${encodeURIComponent(ua)}`;
       }
 
-      console.log(
-        `[Youtubei] Resolved stream URL with client ${client}: ${url.slice(0, 100)}...`,
-      );
 
       try {
         const checkRes = await fetch(url, {
@@ -408,7 +397,6 @@ function getClientUserAgent(client: StreamClient): string {
           console.warn(`[Youtubei] Stream client ${client} failed verification (status ${checkRes.status}), trying next client...`);
           continue;
         }
-        console.log(`[Youtubei] Verification passed for client ${client} (status ${checkRes.status})`);
       } catch (e) {
         console.warn(`[Youtubei] Verification fetch failed for client ${client}:`, e);
         continue;

@@ -99,6 +99,7 @@ const proxyServer = http.createServer((req, res) => {
           await pump();
         };
         pump().catch((err) => {
+          if (err.name === 'AbortError' || err.message?.includes('aborted')) return;
           console.error('[Proxy] Stream piping error:', err);
           res.end();
         });
@@ -169,6 +170,7 @@ export function registerStreamingHandlers() {
       ? [getFallbackEngine(), getAudioEngine()]
       : [getAudioEngine(), getFallbackEngine()];
 
+    const startTime = performance.now();
     let lastError: any = null;
     for (const engine of engines) {
       try {
@@ -194,6 +196,16 @@ export function registerStreamingHandlers() {
         if (!url) {
           throw new Error("Empty stream URL returned by engine");
         }
+
+        let client = 'default';
+        try {
+          const parsed = new URL(url);
+          client = parsed.searchParams.get('c') || 'default';
+        } catch (e) {}
+
+        const engineName = engine.constructor.name.replace('Audio', '').toLowerCase();
+        console.log(`[Audio Engine] Resolved "${trackName}" via ${engineName} (${client}) in ${Math.round(performance.now() - startTime)}ms`);
+
         const localUrl = `http://127.0.0.1:${proxyPort}/stream?url=${encodeURIComponent(url)}`;
         return localUrl;
       } catch (error: any) {
@@ -302,9 +314,6 @@ export function registerStreamingHandlers() {
             : store.get("audioQuality") || "128";
           const audioFormat = "webm";
 
-          console.log(
-            `[Main] Starting new stream fetch for: ${trackName} - ${artistName} (ID: ${trackId})${forceRefresh ? " [force refresh]" : ""}${preferFallback ? " [prefer fallback]" : ""}`,
-          );
 
           const promise = getStreamUrlWithFallback(
             trackName,
@@ -319,9 +328,7 @@ export function registerStreamingHandlers() {
           search = { controller, promise, requesters: new Set() };
           activeSearches.set(trackId, search);
         } else {
-          console.log(
-            `[Main] Joining existing stream fetch for: ${trackName} (ID: ${trackId}) [Count: ${search.requesters.size}]`,
-          );
+          // joining stream fetch
         }
 
         search.requesters.add(rId);
@@ -335,9 +342,6 @@ export function registerStreamingHandlers() {
             currentSearch.requesters.delete(rId);
             if (currentSearch.requesters.size === 0) {
               activeSearches.delete(trackId);
-              console.log(
-                `[Main] Fetch completed and cleared for track: ${trackId}`,
-              );
             }
           }
         }
