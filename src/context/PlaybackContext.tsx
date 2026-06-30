@@ -75,10 +75,8 @@ export const PlaybackProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        console.log('[PlaybackContext] Loading playback settings from store...');
         const savedAudio = await window.ipcRenderer?.invoke('get-setting', 'audioQuality');
         if (savedAudio !== null && savedAudio !== undefined) {
-          console.log(`[PlaybackContext] Loaded audioQuality: ${savedAudio}`);
           setAudioQualityState(savedAudio);
         }
         
@@ -94,13 +92,11 @@ export const PlaybackProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         const savedAudioFormat = await window.ipcRenderer?.invoke('get-setting', 'audioFormat');
         if (savedAudioFormat !== null && savedAudioFormat !== undefined) {
-          console.log(`[PlaybackContext] Loaded audioFormat: ${savedAudioFormat}`);
           setAudioFormatState(savedAudioFormat);
         }
 
         const savedDownloadFormat = await window.ipcRenderer?.invoke('get-setting', 'downloadFormat');
         if (savedDownloadFormat !== null && savedDownloadFormat !== undefined) {
-          console.log(`[PlaybackContext] Loaded downloadFormat: ${savedDownloadFormat}`);
           setDownloadFormatState(savedDownloadFormat);
         }
 
@@ -153,6 +149,8 @@ export const PlaybackProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (savedEqBands !== null && savedEqBands !== undefined) {
           setEqBandsState(savedEqBands);
         }
+
+        console.log(`[PlaybackContext] Loaded settings (Quality: ${savedAudio || '320'}kbps, Engine: ${savedAudioEngine || 'youtubei'}, Format: ${savedAudioFormat || 'opus'})`);
       } catch (e) {
         console.warn('Failed to load playback settings', e);
       }

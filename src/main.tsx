@@ -783,20 +783,18 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <ThemeProvider>
-        <PlaybackProvider>
-          <LanguageProvider>
-            <PlayerProvider>
-              <DynamicColorSync />
-              <App />
-            </PlayerProvider>
-          </LanguageProvider>
-        </PlaybackProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  </React.StrictMode>
+  <ErrorBoundary>
+    <ThemeProvider>
+      <PlaybackProvider>
+        <LanguageProvider>
+          <PlayerProvider>
+            <DynamicColorSync />
+            <App />
+          </PlayerProvider>
+        </LanguageProvider>
+      </PlaybackProvider>
+    </ThemeProvider>
+  </ErrorBoundary>
 )
 
 window.ipcRenderer.on('main-process-message', (_event, message) => {

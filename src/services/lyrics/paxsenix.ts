@@ -37,8 +37,7 @@ function extractLyrics(data: any): string | null {
   return null;
 }
 
-// 1. Apple Music Backend
-async function fetchAppleMusicLyrics(
+export async function fetchAppleMusicLyrics(
   cleanTrack: string,
   cleanArtist: string,
   duration?: number
@@ -116,7 +115,7 @@ async function fetchAppleMusicLyrics(
   return null;
 }
 
-async function fetchNetEaseLyrics(
+export async function fetchNetEaseLyrics(
   cleanTrack: string,
   cleanArtist: string,
   duration?: number
@@ -156,7 +155,26 @@ async function fetchNetEaseLyrics(
   return null;
 }
 
-async function fetchSpotifyMirrorLyrics(
+function getDurationMs(item: any): number {
+  if (typeof item.durationMs === 'number') return item.durationMs;
+  if (typeof item.durationMs === 'string') return parseInt(item.durationMs, 10) || 0;
+  if (!item.duration) return 0;
+  if (typeof item.duration === 'number') return item.duration;
+  if (typeof item.duration === 'string') {
+    const val = parseInt(item.duration, 10);
+    if (!isNaN(val) && String(val) === item.duration) return val;
+    const parts = item.duration.trim().split(':');
+    if (parts.length >= 2) {
+      const seconds = parseInt(parts[parts.length - 1], 10) || 0;
+      const minutes = parseInt(parts[parts.length - 2], 10) || 0;
+      const hours = parts.length >= 3 ? (parseInt(parts[parts.length - 3], 10) || 0) : 0;
+      return (hours * 3600 + minutes * 60 + seconds) * 1000;
+    }
+  }
+  return 0;
+}
+
+export async function fetchSpotifyMirrorLyrics(
   cleanTrack: string,
   cleanArtist: string,
   duration?: number
@@ -172,13 +190,13 @@ async function fetchSpotifyMirrorLyrics(
   const durationMs = duration ? duration * 1000 : 0;
   const bestMatch = durationMs > 0
     ? items.reduce((prev: any, curr: any) => {
-        const prevDiff = Math.abs((prev.durationMs || 0) - durationMs);
-        const currDiff = Math.abs((curr.durationMs || 0) - durationMs);
+        const prevDiff = Math.abs((getDurationMs(prev) || 0) - durationMs);
+        const currDiff = Math.abs((getDurationMs(curr) || 0) - durationMs);
         return currDiff < prevDiff ? curr : prev;
       })
     : items[0];
 
-  const diff = durationMs > 0 ? Math.abs((bestMatch.durationMs || 0) - durationMs) : 0;
+  const diff = durationMs > 0 ? Math.abs((getDurationMs(bestMatch) || 0) - durationMs) : 0;
   if (durationMs > 0 && diff >= 10000) return null;
 
   const lyricsUrl = `${BASE_URL}/spotify/lyrics?id=${bestMatch.realId}`;
@@ -189,7 +207,7 @@ async function fetchSpotifyMirrorLyrics(
   return extractLyrics(raw);
 }
 
-async function fetchMusixmatchMirrorLyrics(
+export async function fetchMusixmatchMirrorLyrics(
   cleanTrack: string,
   cleanArtist: string,
   duration?: number
@@ -231,7 +249,7 @@ async function fetchMusixmatchMirrorLyrics(
   return null;
 }
 
-async function fetchYouTubeMirrorLyrics(
+export async function fetchYouTubeMirrorLyrics(
   cleanTrack: string,
   cleanArtist: string,
   duration?: number
@@ -247,13 +265,13 @@ async function fetchYouTubeMirrorLyrics(
   const durationMs = duration ? duration * 1000 : 0;
   const bestMatch = durationMs > 0
     ? items.reduce((prev: any, curr: any) => {
-        const prevDiff = Math.abs((prev.durationMs || 0) - durationMs);
-        const currDiff = Math.abs((curr.durationMs || 0) - durationMs);
+        const prevDiff = Math.abs((getDurationMs(prev) || 0) - durationMs);
+        const currDiff = Math.abs((getDurationMs(curr) || 0) - durationMs);
         return currDiff < prevDiff ? curr : prev;
       })
     : items[0];
 
-  const diff = durationMs > 0 ? Math.abs((bestMatch.durationMs || 0) - durationMs) : 0;
+  const diff = durationMs > 0 ? Math.abs((getDurationMs(bestMatch) || 0) - durationMs) : 0;
   if (durationMs > 0 && diff >= 10000) return null;
 
   const lyricsUrl = `${BASE_URL}/youtube/lyrics?id=${bestMatch.realId}`;

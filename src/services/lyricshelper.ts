@@ -76,12 +76,12 @@ export const fetchLyricsSmart = async (
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
             if (cached === 'NOT_FOUND') {
-                console.log(`[LyricsHelper] Cache hit (No lyrics found) for: ${cleanTrackName}`);
+                console.log(`[LyricsHelper] Cache hit (No lyrics found) for "${cleanTrackName}" by ${primaryArtist}`);
                 return null;
             }
             const parsed = JSON.parse(cached);
             if (parsed && (parsed.syncedLyrics || parsed.plainLyrics)) {
-                console.log(`[LyricsHelper] Cache hit for: ${cleanTrackName}`);
+                console.log(`[LyricsHelper] Cache hit for "${cleanTrackName}" by ${primaryArtist}`);
                 return ensureRomanized(parsed);
             }
         }
@@ -90,10 +90,9 @@ export const fetchLyricsSmart = async (
     }
 
     const startTime = performance.now();
-
     let data = await fetchSpotifyLyrics(cleanTrackName, primaryArtist, duration, albumName, videoId);
     if (data) {
-        console.log(`[LyricsHelper] Resolved "${cleanTrackName}" via Spotify in ${Math.round(performance.now() - startTime)}ms`);
+        console.log(`[LyricsHelper] Resolved "${cleanTrackName}" by ${primaryArtist} via Spotify (Native) in ${Math.round(performance.now() - startTime)}ms`);
         data = ensureRomanized(data);
         localStorage.setItem(cacheKey, JSON.stringify(data));
         return data;
@@ -112,13 +111,13 @@ export const fetchLyricsSmart = async (
     const result = await raceProviders(fallbacks) as { provider: string; data: LyricData } | null;
 
     if (result) {
-        console.log(`[LyricsHelper] Resolved "${cleanTrackName}" via ${result.provider} in ${Math.round(performance.now() - startTime)}ms`);
+        console.log(`[LyricsHelper] Resolved "${cleanTrackName}" by ${primaryArtist} via ${result.provider} in ${Math.round(performance.now() - startTime)}ms`);
         let resolvedData = ensureRomanized(result.data);
         localStorage.setItem(cacheKey, JSON.stringify(resolvedData));
         return resolvedData;
     }
 
-    console.log(`[LyricsHelper] No lyrics found for "${cleanTrackName}" by ${primaryArtist} (checked all 8 providers in ${Math.round(performance.now() - startTime)}ms)`);
+    console.log(`[LyricsHelper] No lyrics found for "${cleanTrackName}" by ${primaryArtist} (Checked all 8 providers in ${Math.round(performance.now() - startTime)}ms)`);
     localStorage.setItem(cacheKey, 'NOT_FOUND');
     return null;
 };
