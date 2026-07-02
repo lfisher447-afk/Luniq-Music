@@ -193,7 +193,8 @@ const Sidebar: React.FC<SidebarProps> = ({ accessToken: _accessToken, cookies, o
     }, [api, cookies, activeFilter]);
 
     const handleAddClick = () => {
-        setShowAddMenu(prev => !prev);
+        setCreateTarget('local');
+        setShowCreateModal(true);
     };
 
     useEffect(() => {
@@ -283,22 +284,6 @@ const Sidebar: React.FC<SidebarProps> = ({ accessToken: _accessToken, cookies, o
                         >
                             <svg role="img" height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M15.25 8a.75.75 0 01-.75.75H8.75v5.75a.75.75 0 01-1.5 0V8.75H1.5a.75.75 0 010-1.5h5.75V1.5a.75.75 0 011.5 0v5.75h5.75a.75.75 0 01.75.75z"></path></svg>
                         </button>
-                        {showAddMenu && (
-                            <div className="sidebar-add-menu">
-                                <button onClick={() => {
-                                    setCreateTarget('local');
-                                    setShowAddMenu(false);
-                                    setShowCreateModal(true);
-                                }}>Create local playlist</button>
-                                {isOnline && (
-                                    <button onClick={() => {
-                                        setCreateTarget('spotify');
-                                        setShowAddMenu(false);
-                                        setShowCreateModal(true);
-                                    }}>Create spotify playlist</button>
-                                )}
-                            </div>
-                        )}
                     </div>
                 )}
             </div>
