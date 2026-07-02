@@ -2,9 +2,7 @@
 
 All notable changes to Luniq will be documented in this file.
 
-## [1.0.6] - 2026-06-21
-
-### Audio Engine, Search & Playback
+## [1.0.6] - 2026-07-03
 
 #### Added
 
