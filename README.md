@@ -81,7 +81,7 @@ Luniq is built on a modern, high-performance stack designed for the desktop:
 
 ### 🌎 Globalization
 
-Luniq belongs to everyone. Help us localize the experience for your region.
+Help us sprinkle some magic and **[translate Luniq into your language](https://hosted.weblate.org/projects/luniq-music/)**!
 
 [![Translation status](https://hosted.weblate.org/widgets/luniq-music/-/svg-badge.svg)](https://hosted.weblate.org/engage/luniq-music/)
 
@@ -99,7 +99,7 @@ Enjoying Luniq? Consider giving us a ⭐ to support the development and join our
 
 ### / Engagement
 
-[![Star History Chart](https://api.star-history.com/svg?repos=saraansx/Luniq-Music&type=Date)](https://star-history.com/#saraansx/Luniq-Music&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=saraansx/Luniq-Music&type=Date&theme=dark)](https://star-history.com/#saraansx/Luniq-Music&Date)
 
 <br />
 
