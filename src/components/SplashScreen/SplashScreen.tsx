@@ -31,11 +31,11 @@ const SplashScreen = ({ onFinished }: SplashScreenProps) => {
             <div className="splash-logo-container">
                 <img 
                     src={splashLogo} 
-                    alt="Lune Logo" 
+                    alt="Luniq Logo" 
                     className="splash-logo" 
                     draggable={false} 
                 />
-                <h1 className="splash-title">LUNE</h1>
+                <h1 className="splash-title">LUNIQ</h1>
             </div>
             <div className="splash-loader">
                 <div className="splash-loader-dot" />

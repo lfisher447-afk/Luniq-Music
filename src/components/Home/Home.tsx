@@ -19,7 +19,7 @@ interface PlatformCookie {
 
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { LuneTrack, normalizeTrack } from '../../types/track';
+import { LuniqTrack, normalizeTrack } from '../../types/track';
 import { usePlayback } from '../../context/PlaybackContext';
 
 interface HomeProps {
@@ -138,8 +138,8 @@ const Home = ({ accessToken: _accessToken, cookies, onPlaylistSelect, onTrackVie
     if (loading) {
         return (
             <div className="home-container">
-                <div className="lune-loading-container">
-                    <div className="lune-loading-animation">
+                <div className="luniq-loading-container">
+                    <div className="luniq-loading-animation">
                         <div className="bar bar1"></div>
                         <div className="bar bar2"></div>
                         <div className="bar bar3"></div>
@@ -226,7 +226,7 @@ const Home = ({ accessToken: _accessToken, cookies, onPlaylistSelect, onTrackVie
         }
     };
 
-    const fetchTracksForItem = async (item: any): Promise<LuneTrack[]> => {
+    const fetchTracksForItem = async (item: any): Promise<LuniqTrack[]> => {
         const uriType = item.uri?.split(':')?.[1];
         const isTrack = item.objectType === 'Track' || uriType === 'track';
         const isAlbum = item.objectType === 'Album' || uriType === 'album';
@@ -274,7 +274,7 @@ const Home = ({ accessToken: _accessToken, cookies, onPlaylistSelect, onTrackVie
                         if (!trackData) return null;
                         return normalizeTrack(trackData, lowDataMode);
                     })
-                    .filter((t: any): t is LuneTrack => t !== null);
+                    .filter((t: any): t is LuniqTrack => t !== null);
             }
         } catch (err) {
             console.error('Failed to fetch tracks for item:', err);

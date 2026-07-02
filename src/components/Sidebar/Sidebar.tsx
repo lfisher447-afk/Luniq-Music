@@ -184,11 +184,11 @@ const Sidebar: React.FC<SidebarProps> = ({ accessToken: _accessToken, cookies, o
             fetchSavedLibrary();
         };
 
-        window.addEventListener('lune:playlist-update', handlePlaylistUpdate);
-        window.addEventListener('lune:library-update', handleLibraryUpdate);
+        window.addEventListener('luniq:playlist-update', handlePlaylistUpdate);
+        window.addEventListener('luniq:library-update', handleLibraryUpdate);
         return () => {
-            window.removeEventListener('lune:playlist-update', handlePlaylistUpdate);
-            window.removeEventListener('lune:library-update', handleLibraryUpdate);
+            window.removeEventListener('luniq:playlist-update', handlePlaylistUpdate);
+            window.removeEventListener('luniq:library-update', handleLibraryUpdate);
         };
     }, [api, cookies, activeFilter]);
 

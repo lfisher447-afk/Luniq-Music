@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>─── ✧ Contributing to Lune ✧ ───</h1>
-  <p>Lune is open-source and built in the open. Every contribution — whether it's a bug fix,
+  <h1>─── ✧ Contributing to Luniq ✧ ───</h1>
+  <p>Luniq is open-source and built in the open. Every contribution — whether it's a bug fix,
   a feature, or just a well-written issue — moves it forward.</p>
 </div>
 
@@ -39,8 +39,8 @@ Familiarity expected:
 **1. Fork and clone**
 
 ```bash
-git clone https://github.com/your-fork/Lune.git
-cd Lune
+git clone https://github.com/your-fork/Luniq.git
+cd Luniq
 ```
 
 **2. Install dependencies**
@@ -80,7 +80,7 @@ This boots the Vite renderer and the Electron main process in watch mode simulta
 
 ### / Architecture at a Glance
 
-Lune separates concerns across two process boundaries:
+Luniq separates concerns across two process boundaries:
 
 - **Renderer** (`src/`) — React 18 + TypeScript UI. All visual logic, state, and
   routing lives here. Communicates with the main process exclusively via IPC.
@@ -98,7 +98,7 @@ Lune separates concerns across two process boundaries:
 
 ### / Commit Format
 
-Lune uses conventional commit prefixes. Keep messages lowercase and to the point.
+Luniq uses conventional commit prefixes. Keep messages lowercase and to the point.
 
 | Prefix      | When to use                                           |
 | ----------- | ----------------------------------------------------- |
@@ -166,7 +166,7 @@ Open a GitHub Issue or drop into the [Discord server](https://discord.gg/TardrVJ
 
 1. Steps to reproduce
 2. What you expected vs. what happened
-3. OS, Node version, and Lune version
+3. OS, Node version, and Luniq version
 4. Logs from the DevTools console or Electron main process if available
 
 For quick questions or casual discussion, Discord is the faster route.
@@ -175,5 +175,5 @@ GitHub Issues are preferred for anything that needs to be tracked or reproduced.
 ---
 
 <div align="center">
-  <sub>✦ Lune — Crafted for the Aesthetic Listener ✦</sub>
+  <sub>✦ Luniq — Crafted for the Aesthetic Listener ✦</sub>
 </div>

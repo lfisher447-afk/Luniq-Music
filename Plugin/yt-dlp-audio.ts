@@ -263,7 +263,7 @@ export class YtDlpAudio {
                         if (client.includes('mweb')) {
                             ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1';
                         }
-                        url += `&__lune_ua=${encodeURIComponent(ua)}`;
+                        url += `&__luniq_ua=${encodeURIComponent(ua)}`;
                         
                         this.setCachedUrl(cacheKey, url);
                         console.log(`[YtDlp] Cached URL for "${tName}" by ${aName} [${quality||'default'}] via client="${client}" (${this.urlCache.size} entries)`);

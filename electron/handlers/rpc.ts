@@ -164,7 +164,7 @@ export function registerRPCHandlers() {
     }
 
     const buttons: { label: string; url: string }[] = [
-      { label: "🎧 Play on Lune", url: "https://github.com/saraansx/Lune-Music" }
+      { label: "🎧 Play on Luniq", url: "https://github.com/saraansx/Luniq-Music" }
     ];
 
     const activityObj: RPCActivity = {
@@ -172,7 +172,7 @@ export function registerRPCHandlers() {
       state: artist || "",
       type: 2,
       assets: {
-        large_image: albumArt || "lune_logo",
+        large_image: albumArt || "luniq_logo",
       },
       instance: false,
       buttons,

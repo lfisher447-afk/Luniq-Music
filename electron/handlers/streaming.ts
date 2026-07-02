@@ -36,7 +36,7 @@ const proxyServer = http.createServer((req, res) => {
   let resolvedUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
   try {
     const parsed = new URL(targetUrl);
-    const uaParam = parsed.searchParams.get('__lune_ua');
+    const uaParam = parsed.searchParams.get('__luniq_ua');
     if (uaParam) {
       resolvedUserAgent = uaParam;
     }
@@ -285,7 +285,7 @@ export function registerStreamingHandlers() {
           if (local && local.localPath) {
             try {
               await fs.promises.access(local.localPath);
-              return `lune-local://f/${Buffer.from(local.localPath).toString("hex")}`;
+              return `luniq-local://f/${Buffer.from(local.localPath).toString("hex")}`;
             } catch (e) {}
           }
         }
@@ -557,7 +557,7 @@ export function registerStreamingHandlers() {
       );
 
       BrowserWindow.getAllWindows().forEach((w) =>
-        w.webContents.send("lune:download-status-changed"),
+        w.webContents.send("luniq:download-status-changed"),
       );
 
       return true;
@@ -613,7 +613,7 @@ export function registerStreamingHandlers() {
       db.prepare("DELETE FROM downloads WHERE id = ?").run(id);
 
       BrowserWindow.getAllWindows().forEach((w) =>
-        w.webContents.send("lune:download-status-changed"),
+        w.webContents.send("luniq:download-status-changed"),
       );
 
       return true;

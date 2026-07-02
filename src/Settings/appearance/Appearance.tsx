@@ -50,12 +50,12 @@ const Appearance: React.FC = () => {
                         <span className="row-sub">{t('appearance.dynamicColorSub')}</span>
                     </div>
                     <button
-                        className={`lune-toggle ${dynamicColor ? 'on' : ''}`}
+                        className={`luniq-toggle ${dynamicColor ? 'on' : ''}`}
                         onClick={() => setDynamicColor(!dynamicColor)}
                         aria-pressed={dynamicColor}
                         title={t('appearance.dynamicColorLabel')}
                     >
-                        <span className="lune-toggle-thumb" />
+                        <span className="luniq-toggle-thumb" />
                     </button>
                 </div>
 

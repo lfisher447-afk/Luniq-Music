@@ -17,7 +17,7 @@ jobs:
       - name: Submit package to WinGet
         uses: vedantmgoyal9/winget-releaser@v2
         with:
-          identifier: saraansx.Lune
-          installers-regex: 'Lune-Setup-.*\.exe$' 
+          identifier: saraansx.Luniq
+          installers-regex: 'Luniq-Setup-.*\.exe$' 
           token: ${{ secrets.WINGET_GH_TOKEN }}
           release-tag: ${{ github.event.inputs.tag_name || github.event.release.tag_name }}

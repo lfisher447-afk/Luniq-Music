@@ -68,7 +68,7 @@ export async function fetchAppleMusicLyrics(
   // Try TTML first
   try {
     const ttmlUrl = `${BASE_URL}/apple-music/lyrics?id=${songId}&ttml=true`;
-    const res = await fetch(ttmlUrl, { headers: { "User-Agent": "Lune-Music" } });
+    const res = await fetch(ttmlUrl, { headers: { "User-Agent": "Luniq-Music" } });
     if (res.ok) {
       const rawBody = await res.text();
       let ttmlContent = "";
@@ -89,7 +89,7 @@ export async function fetchAppleMusicLyrics(
   // Try JSON LRC fallback
   try {
     const jsonUrl = `${BASE_URL}/apple-music/lyrics?id=${songId}`;
-    const res = await fetch(jsonUrl, { headers: { "User-Agent": "Lune-Music" } });
+    const res = await fetch(jsonUrl, { headers: { "User-Agent": "Luniq-Music" } });
     if (res.ok) {
       const data = await res.json();
       if (data.content && Array.isArray(data.content)) {
@@ -122,7 +122,7 @@ export async function fetchNetEaseLyrics(
 ): Promise<string | null> {
   const query = `${cleanTrack} ${cleanArtist}`;
   const searchUrl = `${BASE_URL}/netease/search?q=${encodeURIComponent(query)}`;
-  const res = await fetch(searchUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const res = await fetch(searchUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!res.ok) return null;
 
   const data = await res.json();
@@ -142,7 +142,7 @@ export async function fetchNetEaseLyrics(
   if (durationMs > 0 && diff >= 10000) return null; 
 
   const lyricsUrl = `${BASE_URL}/netease/lyrics?id=${bestMatch.id}&word=true`;
-  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!lyricsRes.ok) return null;
 
   const lyricsData = await lyricsRes.json();
@@ -181,7 +181,7 @@ export async function fetchSpotifyMirrorLyrics(
 ): Promise<string | null> {
   const query = `${cleanTrack} ${cleanArtist}`;
   const searchUrl = `${BASE_URL}/spotify/search?q=${encodeURIComponent(query)}`;
-  const res = await fetch(searchUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const res = await fetch(searchUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!res.ok) return null;
 
   const items = await res.json();
@@ -200,7 +200,7 @@ export async function fetchSpotifyMirrorLyrics(
   if (durationMs > 0 && diff >= 10000) return null;
 
   const lyricsUrl = `${BASE_URL}/spotify/lyrics?id=${bestMatch.realId}`;
-  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!lyricsRes.ok) return null;
 
   const raw = await lyricsRes.text();
@@ -223,7 +223,7 @@ export async function fetchMusixmatchMirrorLyrics(
     if (durationSec > 0) url.searchParams.append('d', durationSec.toString());
     url.searchParams.append('type', 'word');
 
-    const res = await fetch(url.toString(), { headers: { "User-Agent": "Lune-Music" } });
+    const res = await fetch(url.toString(), { headers: { "User-Agent": "Luniq-Music" } });
     if (res.ok) {
       const raw = await res.text();
       const val = extractLyrics(raw);
@@ -238,7 +238,7 @@ export async function fetchMusixmatchMirrorLyrics(
     url.searchParams.append('a', cleanArtist);
     if (durationSec > 0) url.searchParams.append('d', durationSec.toString());
 
-    const res = await fetch(url.toString(), { headers: { "User-Agent": "Lune-Music" } });
+    const res = await fetch(url.toString(), { headers: { "User-Agent": "Luniq-Music" } });
     if (res.ok) {
       const raw = await res.text();
       const val = extractLyrics(raw);
@@ -256,7 +256,7 @@ export async function fetchYouTubeMirrorLyrics(
 ): Promise<string | null> {
   const query = `${cleanTrack} ${cleanArtist}`;
   const searchUrl = `${BASE_URL}/youtube/search?q=${encodeURIComponent(query)}`;
-  const res = await fetch(searchUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const res = await fetch(searchUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!res.ok) return null;
 
   const items = await res.json();
@@ -275,7 +275,7 @@ export async function fetchYouTubeMirrorLyrics(
   if (durationMs > 0 && diff >= 10000) return null;
 
   const lyricsUrl = `${BASE_URL}/youtube/lyrics?id=${bestMatch.realId}`;
-  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Lune-Music" } });
+  const lyricsRes = await fetch(lyricsUrl, { headers: { "User-Agent": "Luniq-Music" } });
   if (!lyricsRes.ok) return null;
 
   const raw = await lyricsRes.text();

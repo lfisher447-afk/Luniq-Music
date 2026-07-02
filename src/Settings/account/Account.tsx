@@ -73,7 +73,7 @@ const Account: React.FC<AccountProps> = ({ accessToken, cookies: _cookies }) => 
                                 <div className="account-details">
                                     <h3 className="account-name">{accountData.profile.display_name}</h3>
                                     <p className="account-status">
-                                        {"Lune Listener"}
+                                        {"Luniq Listener"}
                                     </p>
                                 </div>
                             </div>

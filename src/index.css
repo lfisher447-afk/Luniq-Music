@@ -168,7 +168,7 @@ button {
   justify-content: center;
 }
 
-.lune-dropdown {
+.luniq-dropdown {
   position: absolute;
   bottom: calc(100% + 8px);
   right: 0;
@@ -179,10 +179,10 @@ button {
   min-width: 180px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
   z-index: var(--z-dropdown);
-  animation: luneDropdownFade 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: luniqDropdownFade 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes luneDropdownFadeDown {
+@keyframes luniqDropdownFadeDown {
   from {
     opacity: 0;
     transform: translateY(-8px) scale(0.95);
@@ -193,7 +193,7 @@ button {
   }
 }
 
-@keyframes luneDropdownFadeUp {
+@keyframes luniqDropdownFadeUp {
   from {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
@@ -204,17 +204,17 @@ button {
   }
 }
 
-.lune-dropdown.open-down {
-  animation: luneDropdownFadeDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.luniq-dropdown.open-down {
+  animation: luniqDropdownFadeDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: top right;
 }
 
-.lune-dropdown.open-up {
-  animation: luneDropdownFadeUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.luniq-dropdown.open-up {
+  animation: luniqDropdownFadeUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: bottom right;
 }
 
-.lune-dropdown-item {
+.luniq-dropdown-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -232,17 +232,17 @@ button {
   white-space: nowrap;
 }
 
-.lune-dropdown-item:hover {
+.luniq-dropdown-item:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.lune-dropdown-divider {
+.luniq-dropdown-divider {
   height: 1px;
   background: rgba(255, 255, 255, 0.08);
   margin: 4px 8px;
 }
 
-.lune-submenu {
+.luniq-submenu {
     display: flex;
     flex-direction: column;
     padding: 4px;
@@ -254,13 +254,13 @@ button {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.lune-submenu .lune-dropdown-item {
+.luniq-submenu .luniq-dropdown-item {
     font-size: 12px;
     padding: 8px 10px;
 }
 
 
-.lune-nav-btn-container {
+.luniq-nav-btn-container {
   display: flex;
   gap: 6px;
   align-items: center;
@@ -268,7 +268,7 @@ button {
   -webkit-app-region: no-drag;
 }
 
-.lune-nav-btn {
+.luniq-nav-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -282,13 +282,13 @@ button {
   transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.lune-nav-btn:hover {
+.luniq-nav-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-main);
   border-color: rgba(255, 255, 255, 0.06);
 }
 
-.lune-nav-btn svg {
+.luniq-nav-btn svg {
   width: 20px;
   height: 20px;
 }
@@ -313,7 +313,7 @@ button {
 .top-global-nav > * {
   pointer-events: auto; }
 
-.lune-loading-container {
+.luniq-loading-container {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -326,7 +326,7 @@ button {
   background: transparent;
 }
 
-.lune-loading-animation {
+.luniq-loading-animation {
   display: flex;
   align-items: flex-end;
   gap: 3px;
@@ -335,33 +335,33 @@ button {
   margin: 0 auto;
 }
 
-.lune-loading-animation .bar {
+.luniq-loading-animation .bar {
   width: 4px;
   background: var(--accent);
-  animation: lune-bounce 1s ease-in-out infinite;
+  animation: luniq-bounce 1s ease-in-out infinite;
   border-radius: 4px; }
 
-.lune-loading-animation .bar1 { animation-delay: 0.1s; height: 60%; }
-.lune-loading-animation .bar2 { animation-delay: 0.3s; height: 100%; }
-.lune-loading-animation .bar3 { animation-delay: 0.2s; height: 40%; }
+.luniq-loading-animation .bar1 { animation-delay: 0.1s; height: 60%; }
+.luniq-loading-animation .bar2 { animation-delay: 0.3s; height: 100%; }
+.luniq-loading-animation .bar3 { animation-delay: 0.2s; height: 40%; }
 
-@keyframes lune-bounce {
+@keyframes luniq-bounce {
   0%, 100% { height: 40%; }
   50% { height: 100%; }
 }
 
-.lune-download-circle-spinner {
+.luniq-download-circle-spinner {
   position: absolute;
   width: 32px;
   height: 32px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: lune-spin 1s linear infinite;
+  animation: luniq-spin 1s linear infinite;
   pointer-events: none;
 }
 
-@keyframes lune-spin {
+@keyframes luniq-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }

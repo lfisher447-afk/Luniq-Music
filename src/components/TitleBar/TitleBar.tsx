@@ -15,7 +15,7 @@ const TitleBar = () => {
 
     return (
         <div className="title-bar">
-            <div className="app-title">LUNE</div>
+            <div className="app-title">LUNIQ</div>
             <div className="window-controls">
                 <button className="control-btn" onClick={handleMinimize}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M5 12h14" /></svg>

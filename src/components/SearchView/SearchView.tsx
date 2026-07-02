@@ -3,7 +3,7 @@ import './SearchView.css';
 import { useApi, useYtApi } from '../../context/ApiContext';
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { normalizeTrack, LuneTrack } from '../../types/track';
+import { normalizeTrack, LuniqTrack } from '../../types/track';
 import { formatDuration } from '../../utils/format';
 import { ARTIST_PLACEHOLDER, ALBUM_PLACEHOLDER } from '../../constants/assets';
 import { usePlayback } from '../../context/PlaybackContext';
@@ -206,7 +206,7 @@ const SearchView = ({
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuTrackId && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.lune-dropdown')) {
+            if (menuTrackId && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.luniq-dropdown')) {
                 setMenuTrackId(null);
                 setMenuPosition(null);
                 setShowPlaylistSubmenu(false);
@@ -327,7 +327,7 @@ const SearchView = ({
                         if (!trackData) return null;
                         return normalizeTrack(trackData, lowDataMode);
                     })
-                    .filter((t: any): t is LuneTrack => t !== null);
+                    .filter((t: any): t is LuniqTrack => t !== null);
 
                 if (tracks.length > 0 && onTrackSelect) {
                     onTrackSelect(tracks[0], tracks);
@@ -378,7 +378,7 @@ const SearchView = ({
         }
     };
 
-    const handleToggleFavorite = async (track: LuneTrack) => {
+    const handleToggleFavorite = async (track: LuniqTrack) => {
         try {
             if (menuFavoriteState) {
                 await window.ipcRenderer.invoke('remove-local-favorite', track.id);
@@ -387,13 +387,13 @@ const SearchView = ({
                 await window.ipcRenderer.invoke('add-local-favorite', track);
                 setMenuFavoriteState(true);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle favorite", e);
         }
     };
 
-    const handleToggleDownload = async (track: LuneTrack) => {
+    const handleToggleDownload = async (track: LuniqTrack) => {
         try {
             if (menuDownloadState) {
                 const success = await window.ipcRenderer.invoke('remove-download', track.id);
@@ -407,7 +407,7 @@ const SearchView = ({
         }
     };
 
-    const handleTogglePlaylistTrack = async (playlistId: string, track: LuneTrack) => {
+    const handleTogglePlaylistTrack = async (playlistId: string, track: LuniqTrack) => {
         try {
             const isInPlaylist = trackPlaylists.includes(playlistId);
             if (isInPlaylist) {
@@ -417,7 +417,7 @@ const SearchView = ({
                 await window.ipcRenderer.invoke('add-track-to-playlist', { playlistId, track });
                 setTrackPlaylists(prev => [...prev, playlistId]);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle playlist track", e);
         }
@@ -436,8 +436,8 @@ const SearchView = ({
             </div>
             
             {loading && !results ? (
-                <div className="lune-loading-container">
-                    <div className="lune-loading-animation">
+                <div className="luniq-loading-container">
+                    <div className="luniq-loading-animation">
                         <div className="bar bar1"></div>
                         <div className="bar bar2"></div>
                         <div className="bar bar3"></div>
@@ -445,7 +445,7 @@ const SearchView = ({
                     <span style={{ marginTop: '16px', fontWeight: 500, letterSpacing: '0.5px', opacity: 0.6 }}>{t('home.loading')}</span>
                 </div>
             ) : !hasResults ? (
-                <div className="lune-loading-container" style={{ minHeight: '300px' }}>
+                <div className="luniq-loading-container" style={{ minHeight: '300px' }}>
                     <div className="search-no-results-icon" style={{ opacity: 0.2, marginBottom: '24px' }}>
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -554,7 +554,7 @@ const SearchView = ({
                                                 
                                                 {menuTrackId === normalized.id && (
                                                     <div 
-                                                        className={`lune-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
+                                                        className={`luniq-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
                                                         style={menuPosition ? {
                                                             position: 'fixed',
                                                             top: menuPosition.isBottom ? 'auto' : `${menuPosition.y + 8}px`,
@@ -564,30 +564,30 @@ const SearchView = ({
                                                             zIndex: 9999
                                                         } : {}}
                                                     >
-                                                        <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); onPlayNext?.(normalized); setMenuTrackId(null); }}>
+                                                        <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); onPlayNext?.(normalized); setMenuTrackId(null); }}>
                                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                                 <path d="M13 12H3M13 6H3M13 18H3" />
                                                                 <path d="M17 8l5 4-5 4V8z" />
                                                             </svg>
                                                             {t('search.playNext')}
                                                         </button>
-                                                        <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); onAddToQueue?.(normalized); setMenuTrackId(null); }}>
+                                                        <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); onAddToQueue?.(normalized); setMenuTrackId(null); }}>
                                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                                             {t('search.addToQueue')}
                                                         </button>
-                                                        <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleFavorite(normalized); setMenuTrackId(null); }}>
+                                                        <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleFavorite(normalized); setMenuTrackId(null); }}>
                                                             {menuFavoriteState ? (
                                                                 <><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {t('search.removeFromFavorites')}</>
                                                             ) : (
                                                                 <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> {t('search.saveToFavorites')}</>
                                                             )}
                                                         </button>
-                                                        <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleDownload(normalized); setMenuTrackId(null); }}>
+                                                        <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleDownload(normalized); setMenuTrackId(null); }}>
                                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                                             {menuDownloadState ? t('search.removeDownload') : t('search.download')}
                                                         </button>
-                                                        <div className="lune-dropdown-divider" />
-                                                        <button className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setShowPlaylistSubmenu(!showPlaylistSubmenu); }}>
+                                                        <div className="luniq-dropdown-divider" />
+                                                        <button className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setShowPlaylistSubmenu(!showPlaylistSubmenu); }}>
                                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                                 <path d="M8 6h13M8 12h13M8 18h5" />
                                                                 <path d="M3 6h.01M3 12h.01M3 18h.01" />
@@ -596,9 +596,9 @@ const SearchView = ({
                                                             {t('search.addToLocalPlaylist')}
                                                         </button>
                                                         {showPlaylistSubmenu && (
-                                                            <div className="lune-submenu">
+                                                            <div className="luniq-submenu">
                                                                 {localPlaylists.map(p => (
-                                                                    <button key={p.id} className={`lune-dropdown-item ${trackPlaylists.includes(p.id) ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleTogglePlaylistTrack(p.id, normalized); }}>
+                                                                    <button key={p.id} className={`luniq-dropdown-item ${trackPlaylists.includes(p.id) ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleTogglePlaylistTrack(p.id, normalized); }}>
                                                                         {p.name}
                                                                         {trackPlaylists.includes(p.id) && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginLeft: 'auto' }}><polyline points="20 6 9 17 4 12"></polyline></svg>}
                                                                     </button>
@@ -729,7 +729,7 @@ const SearchView = ({
                                         
                                         {menuTrackId === normalized.id && (
                                             <div 
-                                                className={`lune-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
+                                                className={`luniq-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
                                                 style={menuPosition ? {
                                                     position: 'fixed',
                                                     top: menuPosition.isBottom ? 'auto' : `${menuPosition.y + 8}px`,
@@ -739,30 +739,30 @@ const SearchView = ({
                                                     zIndex: 9999
                                                 } : {}}
                                             >
-                                                <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); onPlayNext?.(normalized); setMenuTrackId(null); }}>
+                                                <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); onPlayNext?.(normalized); setMenuTrackId(null); }}>
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                         <path d="M13 12H3M13 6H3M13 18H3" />
                                                         <path d="M17 8l5 4-5 4V8z" />
                                                     </svg>
                                                     {t('search.playNext')}
                                                 </button>
-                                                <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); onAddToQueue?.(normalized); setMenuTrackId(null); }}>
+                                                <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); onAddToQueue?.(normalized); setMenuTrackId(null); }}>
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                                     {t('search.addToQueue')}
                                                 </button>
-                                                <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleFavorite(normalized); setMenuTrackId(null); }}>
+                                                <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleFavorite(normalized); setMenuTrackId(null); }}>
                                                     {menuFavoriteState ? (
                                                         <><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {t('search.removeFromFavorites')}</>
                                                     ) : (
                                                         <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> {t('search.saveToFavorites')}</>
                                                     )}
                                                 </button>
-                                                <button className="lune-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleDownload(normalized); setMenuTrackId(null); }}>
+                                                <button className="luniq-dropdown-item" onClick={(e) => { e.stopPropagation(); handleToggleDownload(normalized); setMenuTrackId(null); }}>
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                                     {menuDownloadState ? t('search.removeDownload') : t('search.download')}
                                                 </button>
-                                                <div className="lune-dropdown-divider" />
-                                                <button className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setShowPlaylistSubmenu(!showPlaylistSubmenu); }}>
+                                                <div className="luniq-dropdown-divider" />
+                                                <button className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setShowPlaylistSubmenu(!showPlaylistSubmenu); }}>
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                         <path d="M8 6h13M8 12h13M8 18h5" />
                                                         <path d="M3 6h.01M3 12h.01M3 18h.01" />
@@ -771,9 +771,9 @@ const SearchView = ({
                                                     {t('search.addToLocalPlaylist')}
                                                 </button>
                                                 {showPlaylistSubmenu && (
-                                                    <div className="lune-submenu">
+                                                    <div className="luniq-submenu">
                                                         {localPlaylists.map(p => (
-                                                            <button key={p.id} className={`lune-dropdown-item ${trackPlaylists.includes(p.id) ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleTogglePlaylistTrack(p.id, normalized); }}>
+                                                            <button key={p.id} className={`luniq-dropdown-item ${trackPlaylists.includes(p.id) ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); handleTogglePlaylistTrack(p.id, normalized); }}>
                                                                 {p.name}
                                                                 {trackPlaylists.includes(p.id) && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginLeft: 'auto' }}><polyline points="20 6 9 17 4 12"></polyline></svg>}
                                                             </button>
@@ -847,7 +847,7 @@ const SearchView = ({
             {activeFilter !== 'all' && hasMore && (
                 <div ref={sentinelRef} className="search-load-more" style={{ padding: '40px', display: 'flex', justifyContent: 'center' }}>
                     {isLoadingMore && (
-                        <div className="lune-loading-animation small">
+                        <div className="luniq-loading-animation small">
                             <div className="bar bar1"></div>
                             <div className="bar bar2"></div>
                             <div className="bar bar3"></div>

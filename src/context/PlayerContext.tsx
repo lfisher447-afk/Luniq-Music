@@ -1,26 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { LuneTrack, normalizeTrack } from "../types/track";
+import { LuniqTrack, normalizeTrack } from "../types/track";
 import { usePlayback } from "./PlaybackContext";
 import { fetchLyricsSmart as fetchLyrics } from "../services/lyricshelper";
 
 interface PlayerContextType {
-  currentTrack: LuneTrack | null;
+  currentTrack: LuniqTrack | null;
   isPlaying: boolean;
   isShuffle: boolean;
   isLoop: "none" | "all" | "one";
-  queue: LuneTrack[];
-  shuffledQueue: LuneTrack[];
-  history: LuneTrack[];
-  sessionHistory: LuneTrack[];
+  queue: LuniqTrack[];
+  shuffledQueue: LuniqTrack[];
+  history: LuniqTrack[];
+  sessionHistory: LuniqTrack[];
   sessionIndex: number;
-  contextTracks: LuneTrack[];
+  contextTracks: LuniqTrack[];
   prefetchMap: Record<string, { url: string; timestamp: number }>;
   showQueue: boolean;
   showFullNowPlaying: boolean;
   showLyrics: boolean;
-  autoplayQueue: LuneTrack[];
+  autoplayQueue: LuniqTrack[];
   isRadioLoading: boolean;
-  setAutoplayQueue: React.Dispatch<React.SetStateAction<LuneTrack[]>>;
+  setAutoplayQueue: React.Dispatch<React.SetStateAction<LuniqTrack[]>>;
   setIsRadioLoading: (loading: boolean) => void;
   setIsPlaying: (playing: boolean) => void;
   setIsShuffle: (shuffle: boolean) => void;
@@ -28,9 +28,9 @@ interface PlayerContextType {
   setShowQueue: (show: boolean) => void;
   setShowFullNowPlaying: (show: boolean) => void;
   setShowLyrics: (show: boolean) => void;
-  setCurrentTrack: (track: LuneTrack | null) => void;
-  setQueue: React.Dispatch<React.SetStateAction<LuneTrack[]>>;
-  setHistory: React.Dispatch<React.SetStateAction<LuneTrack[]>>;
+  setCurrentTrack: (track: LuniqTrack | null) => void;
+  setQueue: React.Dispatch<React.SetStateAction<LuniqTrack[]>>;
+  setHistory: React.Dispatch<React.SetStateAction<LuniqTrack[]>>;
   handleTrackSelect: (
     track: any,
     playlistTracks?: any[],
@@ -42,11 +42,11 @@ interface PlayerContextType {
   clearQueue: () => void;
   handleNextTrack: () => void;
   handlePrevTrack: (currentTime?: number) => void;
-  formatTrackForPlayer: (t: any) => LuneTrack;
+  formatTrackForPlayer: (t: any) => LuniqTrack;
   clearHistory: () => Promise<void>;
 
   activeBulkDownloads: Set<string>;
-  startBulkDownload: (id: string, tracks: LuneTrack[]) => Promise<void>;
+  startBulkDownload: (id: string, tracks: LuniqTrack[]) => Promise<void>;
   stopBulkDownload: (id: string) => void;
 }
 
@@ -58,9 +58,9 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const { autoplayEnabled, lowDataMode, audioQuality, audioFormat } =
     usePlayback();
 
-  const [currentTrack, setCurrentTrack] = useState<LuneTrack | null>(() => {
+  const [currentTrack, setCurrentTrack] = useState<LuniqTrack | null>(() => {
     try {
-      const saved = localStorage.getItem("lune_current_track");
+      const saved = localStorage.getItem("luniq_current_track");
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       console.warn("Failed to parse saved track", e);
@@ -71,20 +71,20 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [isShuffle, setIsShuffle] = useState(() => {
-    return localStorage.getItem("lune_is_shuffle") === "true";
+    return localStorage.getItem("luniq_is_shuffle") === "true";
   });
 
   const [isLoop, setIsLoop] = useState<"none" | "all" | "one">(() => {
-    const saved = localStorage.getItem("lune_is_loop");
+    const saved = localStorage.getItem("luniq_is_loop");
     if (saved === "one" || saved === "all" || saved === "none") return saved;
 
     if (saved === "true") return "one";
     return "none";
   });
 
-  const [queue, setQueue] = useState<LuneTrack[]>(() => {
+  const [queue, setQueue] = useState<LuniqTrack[]>(() => {
     try {
-      const saved = localStorage.getItem("lune_queue");
+      const saved = localStorage.getItem("luniq_queue");
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       console.warn("Failed to parse saved queue", e);
@@ -92,29 +92,29 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   });
 
-  const [shuffledQueue, setShuffledQueue] = useState<LuneTrack[]>(() => {
+  const [shuffledQueue, setShuffledQueue] = useState<LuniqTrack[]>(() => {
     try {
-      const saved = localStorage.getItem("lune_shuffled_queue");
+      const saved = localStorage.getItem("luniq_shuffled_queue");
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
     }
   });
 
-  const [contextTracks, setContextTracks] = useState<LuneTrack[]>(() => {
+  const [contextTracks, setContextTracks] = useState<LuniqTrack[]>(() => {
     try {
-      const saved = localStorage.getItem("lune_context_tracks");
+      const saved = localStorage.getItem("luniq_context_tracks");
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
     }
   });
 
-  const [history, setHistory] = useState<LuneTrack[]>([]);
+  const [history, setHistory] = useState<LuniqTrack[]>([]);
 
-  const [sessionHistory, setSessionHistory] = useState<LuneTrack[]>(() => {
+  const [sessionHistory, setSessionHistory] = useState<LuniqTrack[]>(() => {
     try {
-      const saved = localStorage.getItem("lune_session_history");
+      const saved = localStorage.getItem("luniq_session_history");
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
@@ -122,15 +122,15 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const [sessionIndex, setSessionIndex] = useState<number>(() => {
-    const saved = localStorage.getItem("lune_session_index");
+    const saved = localStorage.getItem("luniq_session_index");
     return saved ? parseInt(saved, 10) : -1;
   });
   const [prefetchMap, setPrefetchMap] = useState<
     Record<string, { url: string; timestamp: number }>
   >({});
-  const [autoplayQueue, setAutoplayQueue] = useState<LuneTrack[]>(() => {
+  const [autoplayQueue, setAutoplayQueue] = useState<LuniqTrack[]>(() => {
     try {
-      const saved = localStorage.getItem("lune_autoplay_queue");
+      const saved = localStorage.getItem("luniq_autoplay_queue");
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
@@ -156,22 +156,22 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (currentTrack) {
-      localStorage.setItem("lune_current_track", JSON.stringify(currentTrack));
+      localStorage.setItem("luniq_current_track", JSON.stringify(currentTrack));
     } else {
-      localStorage.removeItem("lune_current_track");
+      localStorage.removeItem("luniq_current_track");
     }
   }, [currentTrack]);
 
   useEffect(() => {
-    localStorage.setItem("lune_is_shuffle", String(isShuffle));
+    localStorage.setItem("luniq_is_shuffle", String(isShuffle));
   }, [isShuffle]);
 
   useEffect(() => {
-    localStorage.setItem("lune_is_loop", isLoop);
+    localStorage.setItem("luniq_is_loop", isLoop);
   }, [isLoop]);
 
   useEffect(() => {
-    localStorage.setItem("lune_autoplay_queue", JSON.stringify(autoplayQueue));
+    localStorage.setItem("luniq_autoplay_queue", JSON.stringify(autoplayQueue));
   }, [autoplayQueue]);
 
   const initialSettingsMount = React.useRef(true);
@@ -189,16 +189,16 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     localStorage.setItem(
-      "lune_session_history",
+      "luniq_session_history",
       JSON.stringify(sessionHistory.slice(-50)),
     );
-    localStorage.setItem("lune_session_index", String(sessionIndex));
+    localStorage.setItem("luniq_session_index", String(sessionIndex));
   }, [sessionHistory, sessionIndex]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const quickRecoveryQueue = queue.slice(0, 25);
-      localStorage.setItem("lune_queue", JSON.stringify(quickRecoveryQueue));
+      localStorage.setItem("luniq_queue", JSON.stringify(quickRecoveryQueue));
     }, 2000);
     return () => clearTimeout(timer);
   }, [queue]);
@@ -207,7 +207,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     const timer = setTimeout(() => {
       const quickRecoveryShuffled = shuffledQueue.slice(0, 25);
       localStorage.setItem(
-        "lune_shuffled_queue",
+        "luniq_shuffled_queue",
         JSON.stringify(quickRecoveryShuffled),
       );
     }, 2000);
@@ -218,7 +218,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     const timer = setTimeout(() => {
       const cappedContext = contextTracks.slice(0, 500);
       localStorage.setItem(
-        "lune_context_tracks",
+        "luniq_context_tracks",
         JSON.stringify(cappedContext),
       );
     }, 1000);
@@ -258,7 +258,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       const activeQueue =
         isShuffle && shuffledQueue.length > 0 ? shuffledQueue : queue;
 
-      const neighbors: LuneTrack[] = [];
+      const neighbors: LuniqTrack[] = [];
 
       if (sessionIndex < sessionHistory.length - 1) {
         neighbors.push(sessionHistory[sessionIndex + 1]);
@@ -450,7 +450,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (currentTrack?.id === formattedTrack.id) {
       window.dispatchEvent(
-        new CustomEvent("lune:restart-track", { detail: { play: true } }),
+        new CustomEvent("luniq:restart-track", { detail: { play: true } }),
       );
     }
     setCurrentTrack(formattedTrack);
@@ -577,7 +577,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       if (contextTracks.length > 1 && isLoop === "all") {
-        let firstTrack: LuneTrack;
+        let firstTrack: LuniqTrack;
 
         if (isShuffle) {
           const reshuffled = fisherYatesShuffle(contextTracks);
@@ -619,7 +619,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
             console.log(
               "[handleNextTrack] Radio queue empty! Triggering emergency fetch...",
             );
-            window.dispatchEvent(new Event("lune:trigger-pool-fetch"));
+            window.dispatchEvent(new Event("luniq:trigger-pool-fetch"));
           }
 
           for (let i = 0; i < 20; i++) {
@@ -661,11 +661,11 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     const playerProgress =
       currentTime !== undefined
         ? currentTime
-        : parseFloat(localStorage.getItem("lune_player_progress") || "0");
+        : parseFloat(localStorage.getItem("luniq_player_progress") || "0");
 
     if (playerProgress > 3) {
       window.dispatchEvent(
-        new CustomEvent("lune:restart-track", { detail: { play: true } }),
+        new CustomEvent("luniq:restart-track", { detail: { play: true } }),
       );
       setIsPlaying(true);
       return;
@@ -692,7 +692,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     setShuffledQueue([]);
   };
 
-  const startBulkDownload = async (id: string, tracks: LuneTrack[]) => {
+  const startBulkDownload = async (id: string, tracks: LuniqTrack[]) => {
     if (activeBulkDownloads.has(id)) return;
 
     const controller = new AbortController();
@@ -762,7 +762,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
         next.delete(id);
         return next;
       });
-      window.dispatchEvent(new Event("lune:download-update"));
+      window.dispatchEvent(new Event("luniq:download-update"));
     }
   };
 

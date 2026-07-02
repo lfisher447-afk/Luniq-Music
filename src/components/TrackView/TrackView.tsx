@@ -215,7 +215,7 @@ const TrackView: React.FC<TrackViewProps> = ({
             if (success) {
                 setMenuFavoriteState(!isLiked);
                                                                       
-                window.dispatchEvent(new Event('lune:playlist-update'));
+                window.dispatchEvent(new Event('luniq:playlist-update'));
             }
         } catch (e) {
             console.error("Failed to toggle favorite:", e);
@@ -254,7 +254,7 @@ const TrackView: React.FC<TrackViewProps> = ({
 
             if (success !== false) { // Sometimes remove-download might not return strict true
                 setMenuDownloadState(!menuDownloadState);
-                window.dispatchEvent(new Event('lune:download-update'));
+                window.dispatchEvent(new Event('luniq:download-update'));
             }
         } catch (e) {
             console.error("Failed to toggle download:", e);
@@ -284,7 +284,7 @@ const TrackView: React.FC<TrackViewProps> = ({
                 });
             }
             if (success) {
-                window.dispatchEvent(new Event('lune:playlist-tracks-update'));
+                window.dispatchEvent(new Event('luniq:playlist-tracks-update'));
                                                           
                 const updatedPlaylists = await window.ipcRenderer.invoke('get-track-playlists', trackId);
                 setTrackPlaylists(updatedPlaylists);
@@ -313,8 +313,8 @@ const TrackView: React.FC<TrackViewProps> = ({
     if (loading) {
         return (
             <div className="track-view-container">
-                <div className="lune-loading-container">
-                    <div className="lune-loading-animation">
+                <div className="luniq-loading-container">
+                    <div className="luniq-loading-animation">
                         <div className="bar bar1"></div>
                         <div className="bar bar2"></div>
                         <div className="bar bar3"></div>
@@ -331,12 +331,12 @@ const TrackView: React.FC<TrackViewProps> = ({
                 <div className="track-view-error">
                     <h2>{t('error.title')}</h2>
                     <p style={{ color: 'var(--text-dim)' }}>{error}</p>
-                <div className="lune-nav-btn-container">
-                    <button onClick={onBack} className="lune-nav-btn" title="Back">
+                <div className="luniq-nav-btn-container">
+                    <button onClick={onBack} className="luniq-nav-btn" title="Back">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </button>
                     {onHome && (
-                        <button onClick={onHome} className="lune-nav-btn" title="Home">
+                        <button onClick={onHome} className="luniq-nav-btn" title="Home">
                             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                         </button>
                     )}
@@ -451,8 +451,8 @@ const TrackView: React.FC<TrackViewProps> = ({
                             </svg>
                         </button>
                         {showMenu && (
-                            <div className="lune-dropdown">
-                                <button className="lune-dropdown-item" onClick={(e) => {
+                            <div className="luniq-dropdown">
+                                <button className="luniq-dropdown-item" onClick={(e) => {
                                     e.stopPropagation();
                                     onPlayNext?.(normalizeTrack(trackData, lowDataMode));
                                     setShowMenu(false);
@@ -463,7 +463,7 @@ const TrackView: React.FC<TrackViewProps> = ({
                                     </svg>
                                     {t('search.playNext')}
                                 </button>
-                                <button className="lune-dropdown-item" onClick={(e) => {
+                                <button className="luniq-dropdown-item" onClick={(e) => {
                                     e.stopPropagation();
                                     onAddToQueue?.(normalizeTrack(trackData, lowDataMode));
                                     setShowMenu(false);
@@ -472,7 +472,7 @@ const TrackView: React.FC<TrackViewProps> = ({
                                     {t('search.addToQueue')}
                                 </button>
                                 {menuFavoriteState !== null && (
-                                    <button className="lune-dropdown-item" onClick={(e) => {
+                                    <button className="luniq-dropdown-item" onClick={(e) => {
                                         e.stopPropagation();
                                         handleToggleFavorite({ id: trackId, name: title, artists: artistNames, albumArt: coverUrl, durationMs });
                                         setShowMenu(false);
@@ -495,7 +495,7 @@ const TrackView: React.FC<TrackViewProps> = ({
                                             </button>
                                         )}
                                         {menuDownloadState !== null && (
-                                            <button className="lune-dropdown-item" onClick={(e) => {
+                                            <button className="luniq-dropdown-item" onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleToggleDownload({ id: trackId, name: title, artists: artistNames, albumArt: coverUrl, durationMs });
                                                 setShowMenu(false);
@@ -508,9 +508,9 @@ const TrackView: React.FC<TrackViewProps> = ({
                                                 {menuDownloadState ? t('search.removeDownload') : t('search.download')}
                                             </button>
                                         )}
-                                        <div className="lune-dropdown-divider" />
+                                        <div className="luniq-dropdown-divider" />
                                         <button 
-                                            className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
+                                            className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShowPlaylistSubmenu(!showPlaylistSubmenu);
@@ -525,14 +525,14 @@ const TrackView: React.FC<TrackViewProps> = ({
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 'auto', transform: showPlaylistSubmenu ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
                                         </button>
                                         {showPlaylistSubmenu && (
-                                            <div className="lune-submenu">
+                                            <div className="luniq-submenu">
                                                 {localPlaylists.length > 0 ? (
                                                     localPlaylists.map((p) => {
                                                         const isInPlaylist = trackPlaylists.includes(p.id);
                                                         return (
                                                             <button 
                                                                 key={p.id} 
-                                                                className={`lune-dropdown-item ${isInPlaylist ? 'active' : ''}`}
+                                                                className={`luniq-dropdown-item ${isInPlaylist ? 'active' : ''}`}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleTogglePlaylistTrack(p.id);
@@ -544,7 +544,7 @@ const TrackView: React.FC<TrackViewProps> = ({
                                                         );
                                                     })
                                                 ) : (
-                                                    <div className="lune-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
+                                                    <div className="luniq-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
                                                 )}
                                             </div>
                                         )}

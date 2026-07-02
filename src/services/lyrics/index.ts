@@ -83,7 +83,7 @@ export const fetchLyrics = async (
                                  
   const primaryArtist = artistName.split(",")[0].split("&")[0].trim();
 
-  const cacheKey = `lune_lyrics_${cleanTrackName.toLowerCase()}_${primaryArtist.toLowerCase()}`;
+  const cacheKey = `luniq_lyrics_${cleanTrackName.toLowerCase()}_${primaryArtist.toLowerCase()}`;
 
                             
   try {

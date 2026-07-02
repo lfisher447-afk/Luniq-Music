@@ -43,7 +43,7 @@ const initDownloadState = () => {
         fetchDownloaded();
     };
 
-    window.addEventListener('lune:download-update', handleUpdate);
+    window.addEventListener('luniq:download-update', handleUpdate);
 
     const ipcRenderer = window.ipcRenderer;
     if (ipcRenderer) {
@@ -66,7 +66,7 @@ const initDownloadState = () => {
             notifyListeners();
         });
 
-        ipcRenderer.on('lune:download-status-changed', handleUpdate); 
+        ipcRenderer.on('luniq:download-status-changed', handleUpdate); 
     }
 };
 

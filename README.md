@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="src/assets/Lune.png" width="150" alt="Lune Logo" />
+  <img src="src/assets/Luniq.png" width="150" alt="Luniq Logo" />
 
   <br />
 
   <h1>─── ✧ L U N E &nbsp; M U S I C ✧ ───</h1>
 
-  <p><b>Lune Music</b> (also known as <b>Lune</b>) is a lightweight, open-source desktop music player developed by <b>saraansx</b>. It leverages Spotify's metadata to deliver ad-free streaming with smart autoplay capabilities, entirely without the need for a paid subscription. Built for performance and beautifully designed, it offers a fast and distraction-free environment for your entire music library.</p>
+  <p><b>Luniq Music</b> (also known as <b>Luniq</b>) is a lightweight, open-source desktop music player developed by <b>saraansx</b>. It leverages Spotify's metadata to deliver ad-free streaming with smart autoplay capabilities, entirely without the need for a paid subscription. Built for performance and beautifully designed, it offers a fast and distraction-free environment for your entire music library.</p>
 
   <br />
 
   <p>
-    <a href="https://github.com/saraansx/Lune-Music/blob/main/LicENSE">
+    <a href="https://github.com/saraansx/Luniq-Music/blob/main/LicENSE">
       <img src="https://img.shields.io/badge/License-GPL--3.0-transparent?style=flat&color=C0C0C0&labelColor=333333" alt="License: GPL v3" />
     </a>
     <img src="https://img.shields.io/badge/Platform-Desktop-transparent?style=flat&color=C0C0C0&labelColor=333333" alt="Platform: Desktop" />
@@ -24,14 +24,14 @@
 <br />
 
 <div align="center">
-  <img src="src/assets/Promotion/p4.png" width="100%" alt="Lune Hero" />
+  <img src="src/assets/Promotion/p4.png" width="100%" alt="Luniq Hero" />
   <table border="0" cellpadding="0" cellspacing="0" width="100%">
     <tr>
-      <td width="50%"><img src="src/assets/Promotion/p2.png" width="100%" alt="Lune Interface 2" /></td>
-      <td width="50%"><img src="src/assets/Promotion/p3.png" width="100%" alt="Lune Interface 3" /></td>
+      <td width="50%"><img src="src/assets/Promotion/p2.png" width="100%" alt="Luniq Interface 2" /></td>
+      <td width="50%"><img src="src/assets/Promotion/p3.png" width="100%" alt="Luniq Interface 3" /></td>
     </tr>
     <tr>
-      <td colspan="2"><img src="src/assets/Promotion/p1.png" width="100%" alt="Lune Interface 1" /></td>
+      <td colspan="2"><img src="src/assets/Promotion/p1.png" width="100%" alt="Luniq Interface 1" /></td>
     </tr>
   </table>
 </div>
@@ -42,18 +42,18 @@
 
 | | |
 | :--- | :--- |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="16" height="16" alt="Windows" style="vertical-align: middle;"/> Windows - [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) | `winget install saraansx.Lune` |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="16" height="16" alt="Windows" style="vertical-align: middle;"/> Windows - [Scoop](https://scoop.sh/) | `scoop bucket add saraansx https://github.com/saraansx/scoop-bucket`<br>`scoop install lune` |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="16" height="16" alt="Windows" style="vertical-align: middle;"/> Windows - [WinGet](https://learn.microsoft.com/en-us/windows/package-manager/winget/) | `winget install saraansx.Luniq` |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" width="16" height="16" alt="Windows" style="vertical-align: middle;"/> Windows - [Scoop](https://scoop.sh/) | `scoop bucket add saraansx https://github.com/saraansx/scoop-bucket`<br>`scoop install luniq` |
 
-_Or grab the latest setup directly from **[Releases](https://github.com/saraansx/Lune-Music/releases)**._
+_Or grab the latest setup directly from **[Releases](https://github.com/saraansx/Luniq-Music/releases)**._
 
 <br />
 
 ### / Development
 
 ```bash
-git clone https://github.com/saraansx/Lune-Music.git
-cd Lune
+git clone https://github.com/saraansx/Luniq-Music.git
+cd Luniq
 npm install
 npm run dev
 ```
@@ -76,7 +76,7 @@ npm run dev
 
 ### / Tech Stack
 
-Lune is built on a modern, high-performance stack designed for the desktop:
+Luniq is built on a modern, high-performance stack designed for the desktop:
 
 - **Logic**: [React 18](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
 - **Desktop Foundation**: [Electron 30](https://www.electronjs.org/)
@@ -90,24 +90,24 @@ Lune is built on a modern, high-performance stack designed for the desktop:
 
 ### / Support
 
-Enjoying Lune? Consider giving us a ⭐ to support the development and join our **[Discord](https://discord.gg/TardrVJT9N)** for updates!
+Enjoying Luniq? Consider giving us a ⭐ to support the development and join our **[Discord](https://discord.gg/TardrVJT9N)** for updates!
 
 <br />
 
 ### / Engagement
 
-[![Star History Chart](https://api.star-history.com/svg?repos=saraansx/Lune-Music&type=Date)](https://star-history.com/#saraansx/Lune-Music&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=saraansx/Luniq-Music&type=Date)](https://star-history.com/#saraansx/Luniq-Music&Date)
 
 <br />
 
 ### / License
 
-Lune is proudly open-source and licensed under the **[GPL-3.0 License](https://github.com/saraansx/Lune-Music/blob/main/LicENSE)**.
+Luniq is proudly open-source and licensed under the **[GPL-3.0 License](https://github.com/saraansx/Luniq-Music/blob/main/LicENSE)**.
 
 This ensures that the project remains free and open. Any modifications or derivative works distributed to others must also be open-source and released under the same license.
 
 ---
 
 <div align="center">
-  <sub>✦ Lune Music by saraansx ─ Crafted for the Aesthetic Listener ✦</sub>
+  <sub>✦ Luniq Music by saraansx ─ Crafted for the Aesthetic Listener ✦</sub>
 </div>

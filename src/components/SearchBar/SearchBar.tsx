@@ -3,7 +3,7 @@ import './SearchBar.css';
 import { useApi } from '../../context/ApiContext';
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { normalizeTrack, LuneTrack } from '../../types/track';
+import { normalizeTrack, LuniqTrack } from '../../types/track';
 import { ARTIST_PLACEHOLDER, ALBUM_PLACEHOLDER } from '../../constants/assets';
 import { usePlayback } from '../../context/PlaybackContext';
 
@@ -186,7 +186,7 @@ const SearchBar = ({
 
             if (success !== false) {
                 setMenuDownloadState(!menuDownloadState);
-                window.dispatchEvent(new Event('lune:download-update'));
+                window.dispatchEvent(new Event('luniq:download-update'));
             }
         } catch (e) {
             console.error("Failed to toggle download:", e);
@@ -209,7 +209,7 @@ const SearchBar = ({
                 });
             }
             if (success) {
-                window.dispatchEvent(new Event('lune:playlist-tracks-update'));
+                window.dispatchEvent(new Event('luniq:playlist-tracks-update'));
                 
                 const updatedPlaylists = await window.ipcRenderer.invoke('get-track-playlists', item.uri?.split(':').pop() || item.id);
                 setTrackPlaylists(updatedPlaylists);
@@ -299,7 +299,7 @@ const SearchBar = ({
                         if (!trackData) return null;
                         return normalizeTrack(trackData, lowDataMode);
                     })
-                    .filter((t: any): t is LuneTrack => t !== null);
+                    .filter((t: any): t is LuniqTrack => t !== null);
 
                 if (tracks.length > 0 && onTrackPlaySelect) {
                     onTrackPlaySelect(tracks[0], tracks);
@@ -338,7 +338,7 @@ const SearchBar = ({
             }
             if (success) {
                 setMenuFavoriteState(!isLiked);
-                window.dispatchEvent(new Event('lune:playlist-update'));
+                window.dispatchEvent(new Event('luniq:playlist-update'));
             }
         } catch (e) {
             console.error("Failed to toggle favorite:", e);
@@ -410,7 +410,7 @@ const SearchBar = ({
                     <h3 className="search-dropdown-header">{t('search.results')}</h3>
                     {isSearching ? (
                         <div className="search-loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 0' }}>
-                            <div className="lune-loading-animation">
+                            <div className="luniq-loading-animation">
                                 <div className="bar bar1"></div>
                                 <div className="bar bar2"></div>
                                 <div className="bar bar3"></div>
@@ -469,8 +469,8 @@ const SearchBar = ({
                                                         </svg>
                                                     </button>
                                                     {activeMenuId === (item.uri?.split(':').pop() || item.id) && (
-                                                        <div className="lune-dropdown">
-                                                             <button className="lune-dropdown-item" onClick={(e) => {
+                                                        <div className="luniq-dropdown">
+                                                             <button className="luniq-dropdown-item" onClick={(e) => {
                                                                  e.stopPropagation();
                                                                  const trackToPlay = normalizeTrack({
                                                                      ...item,
@@ -487,7 +487,7 @@ const SearchBar = ({
                                                                  </svg>
                                                                  {t('search.playNext')}
                                                              </button>
-                                                            <button className="lune-dropdown-item" onClick={(e) => {
+                                                            <button className="luniq-dropdown-item" onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 const trackToAdd = normalizeTrack({
                                                                     ...item,
@@ -502,7 +502,7 @@ const SearchBar = ({
                                                                 {t('search.addToQueue')}
                                                             </button>
                                                             {menuFavoriteState !== null && (
-                                                                <button className="lune-dropdown-item" onClick={(e) => {
+                                                                <button className="luniq-dropdown-item" onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleToggleFavorite(item);
                                                                     setActiveMenuId(null);
@@ -525,7 +525,7 @@ const SearchBar = ({
                                                                 </button>
                                                             )}
                                                             {menuDownloadState !== null && (
-                                                                <button className="lune-dropdown-item" onClick={(e) => {
+                                                                <button className="luniq-dropdown-item" onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     handleToggleDownload(item);
                                                                     setActiveMenuId(null);
@@ -538,9 +538,9 @@ const SearchBar = ({
                                                                     {menuDownloadState ? t('search.removeDownload') : t('search.download')}
                                                                 </button>
                                                             )}
-                                                            <div className="lune-dropdown-divider" />
+                                                            <div className="luniq-dropdown-divider" />
                                                             <button 
-                                                                className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
+                                                                className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     setShowPlaylistSubmenu(!showPlaylistSubmenu);
@@ -556,14 +556,14 @@ const SearchBar = ({
                                                             </button>
                                                             
                                                             {showPlaylistSubmenu && (
-                                                                <div className="lune-submenu">
+                                                                <div className="luniq-submenu">
                                                                     {localPlaylists.length > 0 ? (
                                                                         localPlaylists.map((p) => {
                                                                             const isInPlaylist = trackPlaylists.includes(p.id);
                                                                             return (
                                                                                 <button 
                                                                                     key={p.id} 
-                                                                                    className={`lune-dropdown-item ${isInPlaylist ? 'active' : ''}`}
+                                                                                    className={`luniq-dropdown-item ${isInPlaylist ? 'active' : ''}`}
                                                                                     onClick={(e) => {
                                                                                         e.stopPropagation();
                                                                                         handleTogglePlaylistTrack(p.id, item);
@@ -575,7 +575,7 @@ const SearchBar = ({
                                                                             );
                                                                         })
                                                                     ) : (
-                                                                        <div className="lune-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
+                                                                        <div className="luniq-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
                                                                     )}
                                                                 </div>
                                                             )}

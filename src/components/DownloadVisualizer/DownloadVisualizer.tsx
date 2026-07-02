@@ -23,7 +23,7 @@ const DownloadVisualizer: React.FC = () => {
                             delete updated[data.id];
                             return updated;
                         });
-                        window.dispatchEvent(new Event('lune:download-update'));
+                        window.dispatchEvent(new Event('luniq:download-update'));
                     }, 2500); 
                 }
                 return newState;

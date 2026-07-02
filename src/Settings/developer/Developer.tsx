@@ -21,7 +21,7 @@ const Developer: React.FC = () => {
                         <span className="row-sub">{t('developer.logsSub') || 'View real-time system logs and debug information.'}</span>
                     </div>
                     <button 
-                        className="lune-btn-secondary" 
+                        className="luniq-btn-secondary" 
                         onClick={() => setShowLogs(true)}
                         style={{
                             padding: '8px 16px',

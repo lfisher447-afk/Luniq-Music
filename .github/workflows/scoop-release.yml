@@ -30,7 +30,7 @@ jobs:
           }
           
           $version = $tag.TrimStart('v')
-          $url = "https://github.com/saraansx/Lune-Music/releases/download/$tag/Lune-Setup-${version}.exe"
+          $url = "https://github.com/saraansx/Luniq-Music/releases/download/$tag/Luniq-Setup-${version}.exe"
           
           Write-Host "Waiting for release assets to be available..."
           $maxRetries = 10
@@ -56,9 +56,9 @@ jobs:
           }
           
           Write-Host "Downloading $url to calculate hash..."
-          Invoke-WebRequest -Uri $url -OutFile "Lune-Setup.exe"
-          $hash = (Get-FileHash "Lune-Setup.exe" -Algorithm SHA256).Hash
-          Remove-Item "Lune-Setup.exe"
+          Invoke-WebRequest -Uri $url -OutFile "Luniq-Setup.exe"
+          $hash = (Get-FileHash "Luniq-Setup.exe" -Algorithm SHA256).Hash
+          Remove-Item "Luniq-Setup.exe"
           Write-Host "Calculated Hash: $hash"
           
           # Save for subsequent steps
@@ -75,7 +75,7 @@ jobs:
 
       - name: Modify Scoop JSON
         run: |
-          $jsonPath = "scoop-bucket-repo/bucket/lune.json"
+          $jsonPath = "scoop-bucket-repo/bucket/luniq.json"
           if (-not (Test-Path $jsonPath)) {
             Write-Error "Scoop manifest not found at $jsonPath"
             exit 1
@@ -91,6 +91,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bucket/lune.json
-          git commit -m "chore: update lune to ${{ github.event.release.tag_name }}"
+          git add bucket/luniq.json
+          git commit -m "chore: update luniq to ${{ github.event.release.tag_name }}"
           git push origin HEAD:main

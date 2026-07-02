@@ -13,7 +13,7 @@ body:
       options:
         - label: I have searched existing issues and this has not been reported before
           required: true
-        - label: I am on the latest version of Lune
+        - label: I am on the latest version of Luniq
           required: true
 
   - type: textarea
@@ -21,7 +21,7 @@ body:
       label: Steps to reproduce
       description: Walk us through exactly what you did. Skip no steps.
       value: |
-        1. Open Lune
+        1. Open Luniq
         2. Navigate to '...'
         3. Click on '...'
         4. See error / crash
@@ -32,7 +32,7 @@ body:
     attributes:
       label: Expected behaviour
       description: What should have happened?
-      placeholder: Lune should have...
+      placeholder: Luniq should have...
     validations:
       required: true
 
@@ -40,7 +40,7 @@ body:
     attributes:
       label: Actual behaviour
       description: What happened instead?
-      placeholder: Instead, Lune...
+      placeholder: Instead, Luniq...
     validations:
       required: true
 
@@ -55,7 +55,7 @@ body:
   - type: textarea
     attributes:
       label: Logs
-      description: Go to Settings > Logs in Lune and paste any relevant output below.
+      description: Go to Settings > Logs in Luniq and paste any relevant output below.
       value: |
         <details>
         <summary>Console output</summary>
@@ -69,7 +69,7 @@ body:
 
   - type: input
     attributes:
-      label: Lune version
+      label: Luniq version
       placeholder: "e.g. 1.0.0"
     validations:
       required: true

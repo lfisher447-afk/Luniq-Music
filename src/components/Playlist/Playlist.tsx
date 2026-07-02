@@ -13,7 +13,7 @@ import { formatDuration } from '../../utils/format';
 
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { LuneTrack, normalizeTrack } from '../../types/track';
+import { LuniqTrack, normalizeTrack } from '../../types/track';
 import { usePlayback } from '../../context/PlaybackContext';
 
 interface PlaylistProps {
@@ -45,13 +45,13 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
     const currentTrackId = currentTrack?.id;
     const onToggleShuffle = () => setIsShuffle(!isShuffle);
     const [playlist, setPlaylist] = useState<any>(null);
-    const [tracks, setTracks] = useState<LuneTrack[]>([]);
+    const [tracks, setTracks] = useState<LuniqTrack[]>([]);
     const [artistAlbums, setArtistAlbums] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showMenu, setShowMenu] = useState(false);
     const [trackMenu, setTrackMenu] = useState<string | null>(null); 
-    const [menuTrack, setMenuTrack] = useState<LuneTrack | null>(null); 
+    const [menuTrack, setMenuTrack] = useState<LuniqTrack | null>(null); 
     const [menuPosition, setMenuPosition] = useState<{ x: number, y: number, isBottom: boolean } | null>(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [isInLibrary, setIsInLibrary] = useState<boolean | null>(null);
@@ -161,7 +161,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
 
                         const mapLikedSongs = (items: any[]) => items
                             .map((t: any) => normalizeTrack(t, lowDataMode))
-                            .filter((t: LuneTrack) => t.id);
+                            .filter((t: LuniqTrack) => t.id);
 
                         let allTracks = mapLikedSongs(firstPage.items);
                         const totalTracks = firstPage.total;
@@ -207,7 +207,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                     const trackData = item.itemV2?.data;
                     if (!trackData) return null;
                     return normalizeTrack(trackData, lowDataMode);
-                }).filter((t: any): t is LuneTrack => t !== null);
+                }).filter((t: any): t is LuniqTrack => t !== null);
 
                 
                 const mapAlbumItems = (items: any[], albumCover: string, albumTitle: string) => items.map((item: any) => {
@@ -218,7 +218,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                     if (!normalized.albumArt || normalized.albumArt.includes('data:image/svg')) normalized.albumArt = albumCover;
                     if (!normalized.albumName) normalized.albumName = albumTitle;
                     return normalized;
-                }).filter((t: any): t is LuneTrack => t !== null);
+                }).filter((t: any): t is LuniqTrack => t !== null);
 
                 let success = false;
 
@@ -374,11 +374,11 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 fetchData();
             }
         };
-        window.addEventListener('lune:playlist-update', handleUpdate);
-        window.addEventListener('lune:playlist-tracks-update', handleUpdate);
+        window.addEventListener('luniq:playlist-update', handleUpdate);
+        window.addEventListener('luniq:playlist-tracks-update', handleUpdate);
         return () => {
-            window.removeEventListener('lune:playlist-update', handleUpdate);
-            window.removeEventListener('lune:playlist-tracks-update', handleUpdate);
+            window.removeEventListener('luniq:playlist-update', handleUpdate);
+            window.removeEventListener('luniq:playlist-tracks-update', handleUpdate);
         };
     }, [api, playlistId, isAlbumProp]);
 
@@ -418,7 +418,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                     setIsInLibrary(true);
                 }
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle library status", e);
         }
@@ -455,7 +455,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 });
                 setIsInLocalLibrary(true);
             }
-            window.dispatchEvent(new Event('lune:library-update'));
+            window.dispatchEvent(new Event('luniq:library-update'));
         } catch (e) {
             console.error("Failed to toggle local library", e);
         }
@@ -484,7 +484,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
 
             
             if (trackMenu) {
-                if (!target.closest('.track-context-menu') && !target.closest('.lune-dropdown') && !target.closest('.lune-submenu')) {
+                if (!target.closest('.track-context-menu') && !target.closest('.luniq-dropdown') && !target.closest('.luniq-submenu')) {
                     setTrackMenu(null);
                     setMenuTrack(null);
                     setShowPlaylistSubmenu(false);
@@ -551,7 +551,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
         }
     };
 
-    const handleTogglePlaylistTrack = async (pId: string, item: LuneTrack) => {
+    const handleTogglePlaylistTrack = async (pId: string, item: LuniqTrack) => {
         try {
             const isAlreadyIn = trackPlaylists.includes(pId);
             let success;
@@ -567,7 +567,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 });
             }
             if (success) {
-                window.dispatchEvent(new Event('lune:playlist-tracks-update'));
+                window.dispatchEvent(new Event('luniq:playlist-tracks-update'));
                 
                 const updatedPlaylists = await window.ipcRenderer.invoke('get-track-playlists', item.id);
                 setTrackPlaylists(updatedPlaylists);
@@ -584,7 +584,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 trackId: tId
             });
             if (success) {
-                window.dispatchEvent(new Event('lune:playlist-tracks-update'));
+                window.dispatchEvent(new Event('luniq:playlist-tracks-update'));
                 setTrackMenu(null);
             }
         } catch (err) {
@@ -592,28 +592,28 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
         }
     };
 
-    const handleToggleFavorite = async (item: LuneTrack) => {
+    const handleToggleFavorite = async (item: LuniqTrack) => {
         try {
             if (menuFavoriteState) {
                 await window.ipcRenderer.invoke('remove-local-favorite', item.id);
             } else {
                 await window.ipcRenderer.invoke('add-local-favorite', item);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
             setMenuFavoriteState(!menuFavoriteState);
         } catch (e) {
             console.error("Failed to toggle favorite from menu", e);
         }
     };
 
-    const handleToggleDownload = async (item: LuneTrack) => {
+    const handleToggleDownload = async (item: LuniqTrack) => {
         try {
             if (menuDownloadState) {
                 await window.ipcRenderer.invoke('remove-download', item.id);
             } else {
                 await window.ipcRenderer.invoke('download-track', item);
             }
-            window.dispatchEvent(new Event('lune:download-update'));
+            window.dispatchEvent(new Event('luniq:download-update'));
             setMenuDownloadState(!menuDownloadState);
         } catch (e) {
             console.error("Failed to toggle download from menu", e);
@@ -642,8 +642,8 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
 
     if (loading) {
         return (
-            <div className="lune-loading-container" style={{ background: 'linear-gradient(to bottom, rgba(135, 61, 118, 0.03) 0%, transparent 100%)' }}>
-                <div className="lune-loading-animation" style={{ transform: 'scale(1.5)' }}>
+            <div className="luniq-loading-container" style={{ background: 'linear-gradient(to bottom, rgba(135, 61, 118, 0.03) 0%, transparent 100%)' }}>
+                <div className="luniq-loading-animation" style={{ transform: 'scale(1.5)' }}>
                     <div className="bar bar1"></div>
                     <div className="bar bar2"></div>
                     <div className="bar bar3"></div>
@@ -665,7 +665,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 <p style={{ color: 'var(--text-dim)', marginTop: '-8px', fontSize: '14px' }}>{t('playlist.notFoundDesc')}</p>
                 <button 
                     onClick={onHome || onBack} 
-                    className="lune-dropdown-item active" 
+                    className="luniq-dropdown-item active" 
                     style={{ 
                         marginTop: '12px', 
                         width: 'auto', 
@@ -778,7 +778,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                         </svg>
                     </button>
                     {isDownloading && (
-                        <div className="lune-download-circle-spinner" />
+                        <div className="luniq-download-circle-spinner" />
                     )}
                 </div>
 
@@ -795,18 +795,18 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                         </svg>
                     </button>
                     {showMenu && (
-                        <div className="lune-dropdown open-down" style={{ top: '100%', left: '0', bottom: 'auto', right: 'auto', marginTop: '8px' }} onClick={() => setShowMenu(false)}>
-                            <button className="lune-dropdown-item" onClick={handleShufflePlay}>
+                        <div className="luniq-dropdown open-down" style={{ top: '100%', left: '0', bottom: 'auto', right: 'auto', marginTop: '8px' }} onClick={() => setShowMenu(false)}>
+                            <button className="luniq-dropdown-item" onClick={handleShufflePlay}>
                                 <ShuffleIcon size={14} />
                                 {t('playlist.shufflePlay')}
                             </button>
 
-                            <button className="lune-dropdown-item" onClick={() => { if (tracks.length > 0) onAddToQueue?.(tracks); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { if (tracks.length > 0) onAddToQueue?.(tracks); }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                 {t('playlist.addAllToQueue')}
                             </button>
 
-                            <button className="lune-dropdown-item" onClick={() => { if (tracks.length > 0) onPlayNext?.(tracks); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { if (tracks.length > 0) onPlayNext?.(tracks); }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M13 12H3M13 6H3M13 18H3" />
                                     <path d="M17 8l5 4-5 4V8z" />
@@ -815,7 +815,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                             </button>
 
                             {playlist?.isAlbum && (
-                                <button className="lune-dropdown-item" onClick={() => toggleLibrary()}>
+                                <button className="luniq-dropdown-item" onClick={() => toggleLibrary()}>
                                     {isInLibrary ? (
                                         <>
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -839,7 +839,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
 
                             {!playlist?.isLocal && !playlistId.startsWith('local-') && playlistId !== 'liked-songs' && (
                                 <button 
-                                    className="lune-dropdown-item" 
+                                    className="luniq-dropdown-item" 
                                     onClick={() => toggleLocalLibrary()}
                                     disabled={loading}
                                     style={{ opacity: loading ? 0.5 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}
@@ -864,18 +864,18 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
 
                             {playlist?.isLocal && playlistId !== 'local-favorites' && (
                                 <>
-                                    <div className="lune-dropdown-divider" />
-                                    <button className="lune-dropdown-item" onClick={() => setShowEditModal(true)}>
+                                    <div className="luniq-dropdown-divider" />
+                                    <button className="luniq-dropdown-item" onClick={() => setShowEditModal(true)}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                                         {t('playlist.editDetails')}
                                     </button>
-                                    <button className="lune-dropdown-item danger" style={{ color: '#dc2626' }} onClick={async () => {
+                                    <button className="luniq-dropdown-item danger" style={{ color: '#dc2626' }} onClick={async () => {
                                         try {
                                             const idToDelete = playlistId;
                                             setPlaylist(null);
                                             setError('Playlist deleted');
                                             await window.ipcRenderer.invoke('delete-playlist', idToDelete);
-                                            window.dispatchEvent(new Event('lune:playlist-update'));
+                                            window.dispatchEvent(new Event('luniq:playlist-update'));
                                             onBack();
                                         } catch (e) {
                                             console.error("Failed to delete playlist", e);
@@ -911,7 +911,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                         customScrollParent={scrollParent}
                         data={tracks}
                         overscan={400}
-                        itemContent={(index, item: LuneTrack) => {
+                        itemContent={(index, item: LuniqTrack) => {
                     const isActive = currentTrackId === item.id;
                     return (
                         <div
@@ -980,7 +980,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                 {}
                 {trackMenu && menuTrack && menuPosition && createPortal(
                     <div 
-                        className={`lune-dropdown ${menuPosition.isBottom ? 'open-up' : 'open-down'}`}
+                        className={`luniq-dropdown ${menuPosition.isBottom ? 'open-up' : 'open-down'}`}
                         style={{
                             position: 'fixed',
                             top: menuPosition.isBottom ? 'auto' : `${menuPosition.y + 8}px`,
@@ -990,19 +990,19 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                             zIndex: 9999
                         }}
                     >
-                        <button className="lune-dropdown-item" onClick={() => { onPlayNext?.(menuTrack); setTrackMenu(null); }}>
+                        <button className="luniq-dropdown-item" onClick={() => { onPlayNext?.(menuTrack); setTrackMenu(null); }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M13 12H3M13 6H3M13 18H3" />
                                 <path d="M17 8l5 4-5 4V8z" />
                             </svg>
                             {t('playlist.playNext')}
                         </button>
-                        <button className="lune-dropdown-item" onClick={() => { onAddToQueue?.(menuTrack); setTrackMenu(null); }}>
+                        <button className="luniq-dropdown-item" onClick={() => { onAddToQueue?.(menuTrack); setTrackMenu(null); }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                             {t('playlist.addToQueue')}
                         </button>
                         {menuFavoriteState !== null && (
-                            <button className="lune-dropdown-item" onClick={() => { handleToggleFavorite(menuTrack); setTrackMenu(null); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { handleToggleFavorite(menuTrack); setTrackMenu(null); }}>
                                 {menuFavoriteState ? (
                                     <>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -1021,7 +1021,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                             </button>
                         )}
                         {menuDownloadState !== null && (
-                            <button className="lune-dropdown-item" onClick={() => { handleToggleDownload(menuTrack); setTrackMenu(null); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { handleToggleDownload(menuTrack); setTrackMenu(null); }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -1031,14 +1031,14 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                             </button>
                         )}
                         {playlist.isLocal && playlistId !== 'local-favorites' && (
-                            <button className="lune-dropdown-item danger" onClick={() => handleRemoveFromPlaylist(menuTrack.id)}>
+                            <button className="luniq-dropdown-item danger" onClick={() => handleRemoveFromPlaylist(menuTrack.id)}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
                                 {t('playlist.removeFromPlaylist')}
                             </button>
                         )}
-                        <div className="lune-dropdown-divider" />
+                        <div className="luniq-dropdown-divider" />
                         <button 
-                            className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
+                            className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
                             onClick={() => setShowPlaylistSubmenu(!showPlaylistSubmenu)}
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1050,14 +1050,14 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 'auto', transform: showPlaylistSubmenu ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                         {showPlaylistSubmenu && (
-                            <div className="lune-submenu">
+                            <div className="luniq-submenu">
                                 {localPlaylists.length > 0 ? (
                                     localPlaylists.map((p) => {
                                         const isInPlaylist = trackPlaylists.includes(p.id);
                                         return (
                                             <button 
                                                 key={p.id} 
-                                                className={`lune-dropdown-item ${isInPlaylist ? 'active' : ''}`}
+                                                className={`luniq-dropdown-item ${isInPlaylist ? 'active' : ''}`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleTogglePlaylistTrack(p.id, menuTrack);
@@ -1069,7 +1069,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                                         );
                                     })
                                 ) : (
-                                    <div className="lune-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('playlist.noLocalPlaylists')}</div>
+                                    <div className="luniq-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('playlist.noLocalPlaylists')}</div>
                                 )}
                             </div>
                         )}
@@ -1145,7 +1145,7 @@ const Playlist: React.FC<PlaylistProps> = ({ accessToken: _accessToken, cookies:
                                 description: updated.description,
                                 artwork: updated.artwork
                             });
-                            window.dispatchEvent(new Event('lune:playlist-update'));
+                            window.dispatchEvent(new Event('luniq:playlist-update'));
                         } catch (e) {
                             console.error("Failed to update playlist", e);
                         }

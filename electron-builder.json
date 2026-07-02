@@ -1,12 +1,12 @@
 {
-  "appId": "com.lune.app",
-  "productName": "Lune",
+  "appId": "com.luniq.app",
+  "productName": "Luniq",
   "compression": "maximum",
   "publish": [
     {
       "provider": "github",
       "owner": "saraansx",
-      "repo": "Lune-Music"
+      "repo": "Luniq-Music"
     }
   ],
   "asar": true,
@@ -16,8 +16,8 @@
   ],
   "extraResources": [
     {
-      "from": "src/assets/Lune.png",
-      "to": "Lune.png"
+      "from": "src/assets/Luniq.png",
+      "to": "Luniq.png"
     },
     {
       "from": "src/assets/thumbar",
@@ -33,7 +33,7 @@
     "package.json"
   ],
   "win": {
-    "icon": "src/assets/Lune.png",
+    "icon": "src/assets/Luniq.png",
     "target": [
       {
         "target": "nsis",
@@ -49,10 +49,10 @@
     "allowElevation": false,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false,
-    "uninstallDisplayName": "Lune",
+    "uninstallDisplayName": "Luniq",
     "include": "build/installer.nsh",
     "license": "LicENSE",
-    "shortcutName": "Lune",
+    "shortcutName": "Luniq",
     "runAfterFinish": false,
     "createDesktopShortcut": false,
     "createStartMenuShortcut": true,

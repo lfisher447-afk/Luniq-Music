@@ -301,7 +301,7 @@
     background: var(--hover-bg);
 }
 
-.search-result-actions .lune-dropdown {
+.search-result-actions .luniq-dropdown {
     top: calc(100% + 8px);
     bottom: auto;
     right: 0;

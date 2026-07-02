@@ -15,7 +15,7 @@ import { usePlayer } from "../../context/PlayerContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { formatSeconds } from "../../utils/format";
 import { usePlayback } from "../../context/PlaybackContext";
-import type { LuneTrack } from "../../types/track";
+import type { LuniqTrack } from "../../types/track";
 
 interface LocalPlaylist {
   id: string;
@@ -464,7 +464,7 @@ const PlayerBar: React.FC<{
             `[Radio Pool] Filtered pool: ${filteredTracks.length} unique tracks remaining.`,
           );
 
-          const varietyTracks: LuneTrack[] = [];
+          const varietyTracks: LuniqTrack[] = [];
           const seenArtists = new Set<string>();
           autoplayQueueRef.current
             .slice(-5)
@@ -525,11 +525,11 @@ const PlayerBar: React.FC<{
       setAutoplayQueue([]);
     }
 
-    window.addEventListener("lune:trigger-pool-fetch", fillPool);
+    window.addEventListener("luniq:trigger-pool-fetch", fillPool);
 
     return () => {
       ignorePoolFetch = true;
-      window.removeEventListener("lune:trigger-pool-fetch", fillPool);
+      window.removeEventListener("luniq:trigger-pool-fetch", fillPool);
     };
     
   }, [
@@ -624,7 +624,7 @@ const PlayerBar: React.FC<{
       } else {
         await window.ipcRenderer.invoke("download-track", currentTrack);
       }
-      window.dispatchEvent(new Event("lune:download-update"));
+      window.dispatchEvent(new Event("luniq:download-update"));
       setIsDownloadState(!isDownloadState);
       setShowMoreMenu(false);
     } catch (e) {
@@ -652,7 +652,7 @@ const PlayerBar: React.FC<{
         });
       }
       if (success) {
-        window.dispatchEvent(new Event("lune:playlist-tracks-update"));
+        window.dispatchEvent(new Event("luniq:playlist-tracks-update"));
         const updatedPlaylists = await window.ipcRenderer.invoke(
           "get-track-playlists",
           currentTrack.id,
@@ -818,10 +818,10 @@ const PlayerBar: React.FC<{
 
     
     if (isFirstLoad.current) {
-      const savedTrackId = localStorage.getItem("lune_player_track_id");
+      const savedTrackId = localStorage.getItem("luniq_player_track_id");
       if (savedTrackId === currentTrack.id) {
         const savedProgress = parseFloat(
-          localStorage.getItem("lune_player_progress") || "0",
+          localStorage.getItem("luniq_player_progress") || "0",
         );
         if (!isNaN(savedProgress)) {
           setCurrentTime(savedProgress);
@@ -931,9 +931,9 @@ const PlayerBar: React.FC<{
         }
       }
     };
-    window.addEventListener("lune:restart-track", handleRestart);
+    window.addEventListener("luniq:restart-track", handleRestart);
     return () =>
-      window.removeEventListener("lune:restart-track", handleRestart);
+      window.removeEventListener("luniq:restart-track", handleRestart);
   }, []);
 
   useEffect(() => {
@@ -968,12 +968,12 @@ const PlayerBar: React.FC<{
         setProgress((current / dur) * 100);
       }
 
-      window.dispatchEvent(new CustomEvent("lune:timeupdate", { detail: { currentTime: current } }));
+      window.dispatchEvent(new CustomEvent("luniq:timeupdate", { detail: { currentTime: current } }));
 
       
       if (currentTrack && Math.abs(current - lastSavedTime.current) > 2) {
-        localStorage.setItem("lune_player_progress", String(current));
-        localStorage.setItem("lune_player_track_id", currentTrack.id);
+        localStorage.setItem("luniq_player_progress", String(current));
+        localStorage.setItem("luniq_player_track_id", currentTrack.id);
         lastSavedTime.current = current;
       }
     }
@@ -1090,9 +1090,9 @@ const PlayerBar: React.FC<{
 
     checkFav();
 
-    window.addEventListener("lune:playlist-update", checkFav);
+    window.addEventListener("luniq:playlist-update", checkFav);
     return () => {
-      window.removeEventListener("lune:playlist-update", checkFav);
+      window.removeEventListener("luniq:playlist-update", checkFav);
     };
   }, [currentTrack]);
 
@@ -1110,7 +1110,7 @@ const PlayerBar: React.FC<{
         setIsFavorite(true);
       }
       
-      window.dispatchEvent(new Event("lune:playlist-update"));
+      window.dispatchEvent(new Event("luniq:playlist-update"));
     } catch (e) {
       console.error("Failed to toggle favorite", e);
     }
@@ -1313,11 +1313,11 @@ const PlayerBar: React.FC<{
 
           {showMoreMenu && (
             <div
-              className="lune-dropdown open-up solid-dropdown"
+              className="luniq-dropdown open-up solid-dropdown"
               style={{ bottom: "calc(100% + 15px)", left: "0", right: "auto" }}
             >
               <button
-                className="lune-dropdown-item"
+                className="luniq-dropdown-item"
                 onClick={() => {
                   onPlayNext?.(currentTrack);
                   setShowMoreMenu(false);
@@ -1339,7 +1339,7 @@ const PlayerBar: React.FC<{
                 {t("playlist.playNext")}
               </button>
               <button
-                className="lune-dropdown-item"
+                className="luniq-dropdown-item"
                 onClick={() => {
                   onAddToQueue?.(currentTrack);
                   setShowMoreMenu(false);
@@ -1360,7 +1360,7 @@ const PlayerBar: React.FC<{
 
               {isDownloadState !== null && (
                 <button
-                  className="lune-dropdown-item"
+                  className="luniq-dropdown-item"
                   onClick={() => handleToggleDownload()}
                 >
                   <svg
@@ -1383,10 +1383,10 @@ const PlayerBar: React.FC<{
                 </button>
               )}
 
-              <div className="lune-dropdown-divider" />
+              <div className="luniq-dropdown-divider" />
 
               <button
-                className={`lune-dropdown-item ${showPlaylistSubmenu ? "active" : ""}`}
+                className={`luniq-dropdown-item ${showPlaylistSubmenu ? "active" : ""}`}
                 onClick={() => setShowPlaylistSubmenu(!showPlaylistSubmenu)}
               >
                 <svg
@@ -1422,14 +1422,14 @@ const PlayerBar: React.FC<{
               </button>
 
               {showPlaylistSubmenu && (
-                <div className="lune-submenu">
+                <div className="luniq-submenu">
                   {localPlaylists.length > 0 ? (
                     localPlaylists.map((p) => {
                       const isInPlaylist = trackPlaylists.includes(p.id);
                       return (
                         <button
                           key={p.id}
-                          className={`lune-dropdown-item ${isInPlaylist ? "active" : ""}`}
+                          className={`luniq-dropdown-item ${isInPlaylist ? "active" : ""}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleTogglePlaylistTrack(p.id);
@@ -1454,7 +1454,7 @@ const PlayerBar: React.FC<{
                     })
                   ) : (
                     <div
-                      className="lune-dropdown-item disabled"
+                      className="luniq-dropdown-item disabled"
                       style={{ opacity: 0.5, cursor: "default" }}
                     >
                       {t("playlist.noLocalPlaylists")}

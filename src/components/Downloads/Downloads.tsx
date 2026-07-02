@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Downloads.css';
 import ShuffleButton from '../Shuffle/ShuffleButton';
 import ShuffleIcon from '../Icons/ShuffleIcon';
-import { LuneTrack, normalizeTrack } from '../../types/track';
+import { LuniqTrack, normalizeTrack } from '../../types/track';
 import { usePlayer } from '../../context/PlayerContext';
 import { DownloadIndicator } from '../DownloadIndicator/DownloadIndicator';
 import { useLanguage } from '../../context/LanguageContext';
@@ -11,7 +11,7 @@ import { usePlayback } from '../../context/PlaybackContext';
 import { Virtuoso } from 'react-virtuoso';
 
 interface DownloadsProps {
-    onTrackSelect?: (track: LuneTrack, playlistTracks: LuneTrack[]) => void;
+    onTrackSelect?: (track: LuniqTrack, playlistTracks: LuniqTrack[]) => void;
 }
 
 import { formatDuration } from '../../utils/format';
@@ -22,7 +22,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
     const { lowDataMode } = usePlayback();
     const { t } = useLanguage();
     const currentTrackId = currentTrack?.id;
-    const [downloads, setDownloads] = useState<LuneTrack[]>([]);
+    const [downloads, setDownloads] = useState<LuniqTrack[]>([]);
     const [loading, setLoading] = useState(true);
     const [showMenu, setShowMenu] = useState(false);
 
@@ -66,21 +66,21 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
         const handleUpdate = () => fetchDownloads();
         
         
-        window.addEventListener('lune:download-update', handleUpdate);
+        window.addEventListener('luniq:download-update', handleUpdate);
         
         
         window.addEventListener('focus', handleUpdate);
         
         const ipc = window.ipcRenderer;
         if (ipc) {
-            ipc.on('lune:download-status-changed', handleUpdate);
+            ipc.on('luniq:download-status-changed', handleUpdate);
         }
 
         return () => {
-            window.removeEventListener('lune:download-update', handleUpdate);
+            window.removeEventListener('luniq:download-update', handleUpdate);
             window.removeEventListener('focus', handleUpdate);
             if (ipc) {
-                ipc.off('lune:download-status-changed', handleUpdate);
+                ipc.off('luniq:download-status-changed', handleUpdate);
             }
         };
     }, []);
@@ -90,7 +90,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
             if (showMenu && menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setShowMenu(false);
             }
-            if (trackMenu && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.lune-dropdown')) {
+            if (trackMenu && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.luniq-dropdown')) {
                 setTrackMenu(null);
                 setMenuPosition(null);
                 setShowPlaylistSubmenu(false);
@@ -101,7 +101,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showMenu, trackMenu]);
 
-    const handleTrackMenuClick = async (e: React.MouseEvent, track: LuneTrack) => {
+    const handleTrackMenuClick = async (e: React.MouseEvent, track: LuniqTrack) => {
         e.stopPropagation();
         if (trackMenu === track.id) {
             setTrackMenu(null);
@@ -136,7 +136,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
         }
     };
 
-    const handleToggleFavorite = async (track: LuneTrack) => {
+    const handleToggleFavorite = async (track: LuniqTrack) => {
         try {
             if (menuFavoriteState) {
                 await window.ipcRenderer.invoke('remove-local-favorite', track.id);
@@ -145,13 +145,13 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                 await window.ipcRenderer.invoke('add-local-favorite', track);
                 setMenuFavoriteState(true);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle favorite", e);
         }
     };
 
-    const handleTogglePlaylistTrack = async (playlistId: string, track: LuneTrack) => {
+    const handleTogglePlaylistTrack = async (playlistId: string, track: LuniqTrack) => {
         try {
             const isInPlaylist = trackPlaylists.includes(playlistId);
             if (isInPlaylist) {
@@ -161,7 +161,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                 await window.ipcRenderer.invoke('add-track-to-playlist', { playlistId, track });
                 setTrackPlaylists(prev => [...prev, playlistId]);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle playlist track", e);
         }
@@ -181,7 +181,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
             const success = await window.ipcRenderer.invoke('remove-download', id);
             if (success) {
                 fetchDownloads();
-                window.dispatchEvent(new Event('lune:download-update'));
+                window.dispatchEvent(new Event('luniq:download-update'));
             }
         } catch (err) {
             console.error("Failed to remove download", err);
@@ -244,16 +244,16 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                         </svg>
                     </button>
                     {showMenu && (
-                        <div className="lune-dropdown open-down" style={{ top: '100%', left: '0', bottom: 'auto', right: 'auto', marginTop: '8px' }} onClick={() => setShowMenu(false)}>
-                            <button className="lune-dropdown-item" onClick={handleShufflePlay}>
+                        <div className="luniq-dropdown open-down" style={{ top: '100%', left: '0', bottom: 'auto', right: 'auto', marginTop: '8px' }} onClick={() => setShowMenu(false)}>
+                            <button className="luniq-dropdown-item" onClick={handleShufflePlay}>
                                 <ShuffleIcon size={14} />
                                 {t('downloads.shufflePlay')}
                             </button>
-                            <button className="lune-dropdown-item" onClick={() => { if (downloads.length > 0) handleAddToQueue(downloads); setShowMenu(false); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { if (downloads.length > 0) handleAddToQueue(downloads); setShowMenu(false); }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                 {t('downloads.addAllToQueue')}
                             </button>
-                            <button className="lune-dropdown-item" onClick={() => { if (downloads.length > 0) handlePlayNext(downloads); setShowMenu(false); }}>
+                            <button className="luniq-dropdown-item" onClick={() => { if (downloads.length > 0) handlePlayNext(downloads); setShowMenu(false); }}>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M13 12H3M13 6H3M13 18H3" />
                                     <path d="M17 8l5 4-5 4V8z" />
@@ -281,8 +281,8 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                 </div>
 
                 {loading ? (
-                    <div className="lune-loading-container" style={{ padding: '60px 0' }}>
-                        <div className="lune-loading-animation" style={{ transform: 'scale(1.5)' }}>
+                    <div className="luniq-loading-container" style={{ padding: '60px 0' }}>
+                        <div className="luniq-loading-animation" style={{ transform: 'scale(1.5)' }}>
                             <div className="bar bar1"></div>
                             <div className="bar bar2"></div>
                             <div className="bar bar3"></div>
@@ -352,7 +352,7 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                 
                 {trackMenu && (
                     <div 
-                        className={`lune-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
+                        className={`luniq-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
                         style={menuPosition ? {
                             position: 'fixed',
                             top: menuPosition.isBottom ? 'auto' : `${menuPosition.y + 8}px`,
@@ -369,27 +369,27 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                             if (!track) return null;
                             return (
                                 <>
-                                    <button className="lune-dropdown-item" onClick={() => { handlePlayNext(track); setTrackMenu(null); }}>
+                                    <button className="luniq-dropdown-item" onClick={() => { handlePlayNext(track); setTrackMenu(null); }}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M13 12H3M13 6H3M13 18H3" />
                                             <path d="M17 8l5 4-5 4V8z" />
                                         </svg>
                                         {t('downloads.playNext')}
                                     </button>
-                                    <button className="lune-dropdown-item" onClick={() => { handleAddToQueue(track); setTrackMenu(null); }}>
+                                    <button className="luniq-dropdown-item" onClick={() => { handleAddToQueue(track); setTrackMenu(null); }}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                         {t('downloads.addToQueue')}
                                     </button>
-                                    <button className="lune-dropdown-item" onClick={() => { handleToggleFavorite(track); setTrackMenu(null); }}>
+                                    <button className="luniq-dropdown-item" onClick={() => { handleToggleFavorite(track); setTrackMenu(null); }}>
                                         {menuFavoriteState ? (
                                             <><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> {t('downloads.removeFavorites')}</>
                                         ) : (
                                             <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> {t('downloads.saveToFavorites')}</>
                                         )}
                                     </button>
-                                    <div className="lune-dropdown-divider" />
+                                    <div className="luniq-dropdown-divider" />
                                     <button 
-                                        className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
+                                        className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
                                         onClick={() => setShowPlaylistSubmenu(!showPlaylistSubmenu)}
                                     >
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -401,14 +401,14 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 'auto', transform: showPlaylistSubmenu ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </button>
                                     {showPlaylistSubmenu && (
-                                        <div className="lune-submenu">
+                                        <div className="luniq-submenu">
                                             {localPlaylists.length > 0 ? (
                                                 localPlaylists.map((p) => {
                                                     const isInPlaylist = trackPlaylists.includes(p.id);
                                                     return (
                                                         <button 
                                                             key={p.id} 
-                                                            className={`lune-dropdown-item ${isInPlaylist ? 'active' : ''}`}
+                                                            className={`luniq-dropdown-item ${isInPlaylist ? 'active' : ''}`}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 handleTogglePlaylistTrack(p.id, track);
@@ -420,12 +420,12 @@ const Downloads: React.FC<DownloadsProps> = ({ onTrackSelect: _onTrackSelect }) 
                                                     );
                                                 })
                                             ) : (
-                                                <div className="lune-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('downloads.noLocalPlaylists')}</div>
+                                                <div className="luniq-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('downloads.noLocalPlaylists')}</div>
                                             )}
                                         </div>
                                     )}
-                                    <div className="lune-dropdown-divider" />
-                                    <button className="lune-dropdown-item danger" onClick={() => handleRemoveTrack(track.id)}>
+                                    <div className="luniq-dropdown-divider" />
+                                    <button className="luniq-dropdown-item danger" onClick={() => handleRemoveTrack(track.id)}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                                         {t('downloads.removeDownload')}
                                     </button>

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Lune will be documented in this file.
+All notable changes to Luniq will be documented in this file.
 
 ## [1.0.6] - 2026-06-21
 
@@ -11,7 +11,7 @@ All notable changes to Lune will be documented in this file.
 - **Redesigned Create Playlist Modal:** Overhauled the playlist creation and detail editing modal to adopt Spotify's side-by-side layout, positioning the artwork picker as a left column next to the stacked text input and description fields on the right. Simplified aesthetics by removing redundant input labels and changing the "ADD ARTWORK" label to a normal-cased "Choose photo" placeholder across all 21 translation files.
 - **Weblate Translation Integration:** Configured and integrated Weblate translation setup, registered translation instructions guidelines for translators, and unlocked automated pushing back to GitHub using authentication tokens.
 - **Tamil Language Support:** Added full Tamil translation (`ta.json`) and registered it in the i18n module and application settings language selection dropdown.
-- **Discord Rich Presence Activity Button:** Added an "🎧 Play on Lune" button linking to the GitHub repository, allowing friends on Discord to see what you are listening to and download the Lune app.
+- **Discord Rich Presence Activity Button:** Added an "🎧 Play on Luniq" button linking to the GitHub repository, allowing friends on Discord to see what you are listening to and download the Luniq app.
 - **Command-Line Lyrics Test Suite:** Added a dedicated CLI script `scripts/test_lyrics.ts` to test and verify all registered lyrics providers directly, including native Spotify credentials extraction.
 - **YouLyPlus Lyrics Provider:** Integrated the YouLyPlus engine, cascading requests across 5 mirror servers with support for XML-based TTML parsing and raw LRC fallback synchronization.
 - **Multitasked Parallel Racing:** Overhauled `lyricshelper.ts` to race lyric retrieval requests in parallel, returning single-line timed reports identifying the winning provider.
@@ -44,6 +44,9 @@ All notable changes to Lune will be documented in this file.
 
 #### Changed
 
+- **App Rebranding:** The entire application and all assets have been globally rebranded from Lune to Luniq.
+- **Spotify Hash Registry Updates:** Synced internal GraphQL hashes with the new Spotify version 2 registry and deprecated the legacy `fetchSeedSuggestions` radio fallback.
+- **Splash Screen Polish:** Tightened the letter spacing of the LUNIQ splash screen logo for a sleeker aesthetic.
 - **Console Log Cleanup & Optimization:** Consolidated multiple settings and lyrics helper messages into single-line summaries, silenced redundant WebRequest HTTP 404/401 error response logs from parallel fallback engines, and removed React's StrictMode wrapper from the main React bootstrapper to eliminate double-render log spams in development console.
 - **Homepage Feed Optimization:** Filtered out podcast episode sections ("Episodes you might like"), show recommendations, and audiobook items from the Spotify home feed to ensure a 100% music-focused layout.
 - **Home Screen Cleanup:** Hid the "Recently played" section from the main Home page browse grid, as it's now properly integrated into the Queue History tab.
@@ -58,7 +61,7 @@ All notable changes to Lune will be documented in this file.
 
 #### Fixed
 
-- **Fixed Audio Output Device Selection:** Fixed an issue where changing the playback device in Lune settings did not route audio correctly and kept playing to the default system device. Since the audio is routed through a Web Audio API graph (for EQ, Mono, and Volume Normalization), the device must be applied to both the `AudioContext` destination node and the HTML `<audio>` node.
+- **Fixed Audio Output Device Selection:** Fixed an issue where changing the playback device in Luniq settings did not route audio correctly and kept playing to the default system device. Since the audio is routed through a Web Audio API graph (for EQ, Mono, and Volume Normalization), the device must be applied to both the `AudioContext` destination node and the HTML `<audio>` node.
 - **Fixed Paxsenix Duration Filtering:** Added duration-string format support to the Paxsenix Spotify and YouTube search reducers to prevent duration-tolerance mismatches when parsing non-millisecond duration values.
 
 - **Fixed Anonymous Google Video Range Block:** Resolved the issue where Google Video Server rejected offset range requests past 1MB with a `403 Forbidden` for anonymous clients. Prioritized the `"ANDROID_VR"` client, which natively supports offset range requests past 1MB without requiring cookies or active session verification.
@@ -72,7 +75,7 @@ All notable changes to Lune will be documented in this file.
 - **yt-dlp Binary Update Failure:** Fixed a bug where `yt-dlp.exe` could not update in production builds because it was locked inside the read-only `.asar` package. The binary is now correctly migrated to the user's local `AppData` directory upon launch, granting it full permissions to overwrite itself.
 - **Build Configuration Schema:** Suppressed false-positive IDE schema warnings in `electron-builder.json` by removing the outdated schema URL.
 - **Type Declaration Missing:** Restored Vite's client typings (`/// <reference types="vite/client" />`) in `vite-env.d.ts` to fix missing module errors for image assets in the IDE.
-- **Spotify Auth Popup Improvements:** The Spotify sign-in popup now displays the correct Lune app icon and title. The flow also bypasses the "Download Spotify" trap page by instantly detecting the auth cookie upon a successful login or signup and closing automatically.
+- **Spotify Auth Popup Improvements:** The Spotify sign-in popup now displays the correct Luniq app icon and title. The flow also bypasses the "Download Spotify" trap page by instantly detecting the auth cookie upon a successful login or signup and closing automatically.
 - **Enabled Google Social Sign-In & Session Isolation:** Configured the login window to spoof a standard Firefox User-Agent, bypassing Google's WebView security blocks. Also isolated the login session using dynamic, in-memory partitions, ensuring that failed or incorrect social logins (e.g. choosing a Google account not linked to Spotify) clear immediately, allowing users to try a different account without getting stuck on cached cookies.
 - **Fixed `yt-dlp` PyInstaller Extraction Errors:** Added a startup cleanup script that automatically deletes stale `_MEI` folders left behind by `yt-dlp` in the system's temporary directory. This prevents the `return code -3` extraction failure caused by lingering files or corrupted temp caches.
 - **Fixed Auto-Skip on Re-Play:** Fixed a bug where clicking "Play" on a track that was already in the process of loading would mistakenly cancel the ongoing stream request, causing a stream error and forcing the player to auto-skip to the next song.
@@ -160,7 +163,7 @@ This update eliminates the need for app updates when Spotify changes their API h
 #### Added
 
 - **Gapless Autoplay Transition:** The `AutoplayQueue` radio tracks are now fully integrated into the stream prefetcher. When the player queue falls back to the autoplay list, the next track's audio is fetched in the background before the current song finishes, ensuring instant gapless playback transitions.
-- **Backend Application Logs:** Internal application logs, including the Rate Limiter, Radio Pool engine, and Stream Prefetcher, are now dynamically intercepted from the React frontend and bridged directly into the Electron main process logs for easier debugging in the Lune Settings.
+- **Backend Application Logs:** Internal application logs, including the Rate Limiter, Radio Pool engine, and Stream Prefetcher, are now dynamically intercepted from the React frontend and bridged directly into the Electron main process logs for easier debugging in the Luniq Settings.
 - **Remote Hash Registry:** All Spotify GraphQL persisted-query hashes are now fetched from a remote GitHub Gist at runtime instead of being hardcoded. If a hash breaks, it can be fixed by editing the gist — no app update required. Hashes are cached in memory with a 30-minute TTL, with graceful fallback to stale cache if the remote fetch fails.
 - **Downloads View:** Brand new dedicated Downloads page with full track listing, virtualized scrolling (handles thousands of tracks), shuffle play, queue management, and per-track context menus (play next, add to queue, favorite, add to local playlist, remove download).
 - **Download Settings:** New settings panel to view and change the download storage location with a folder picker.

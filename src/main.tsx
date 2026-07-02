@@ -135,10 +135,10 @@ const MainLayout = ({
         />
         <div style={{ flex: 1, overflow: 'hidden', width: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
           <div className="top-global-nav" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', width: '100%' }}>
-            <div className="lune-nav-btn-container" style={{ justifySelf: 'start' }}>
+            <div className="luniq-nav-btn-container" style={{ justifySelf: 'start' }}>
               <button 
                 onClick={handlePopBack} 
-                className="lune-nav-btn" 
+                className="luniq-nav-btn" 
                 title={t('nav.back')}
                 disabled={viewStack.length === 0}
                 style={{ opacity: viewStack.length > 0 ? 1 : 0.3, cursor: viewStack.length > 0 ? 'pointer' : 'default' }}
@@ -148,7 +148,7 @@ const MainLayout = ({
               {isOnline && (
                 <button 
                   onClick={handleBackToHome} 
-                  className="lune-nav-btn" 
+                  className="luniq-nav-btn" 
                   title={t('nav.home')}
                   style={{ color: view === 'home' ? '#ffffff' : '#b3b3b3' }}
                 >
@@ -187,9 +187,9 @@ const MainLayout = ({
               )}
             </div>
 
-            <div className="lune-top-actions" style={{ justifySelf: 'end', display: 'flex', alignItems: 'center' }}>
+            <div className="luniq-top-actions" style={{ justifySelf: 'end', display: 'flex', alignItems: 'center' }}>
               <button 
-                className="lune-nav-btn lune-settings-btn" 
+                className="luniq-nav-btn luniq-settings-btn" 
                 title={t('nav.settings')}
                 onClick={handleSettingsClick}
               >
@@ -309,8 +309,8 @@ const MajorUpdateModal = ({ updateStatus, setAppUpdateStatus }: { updateStatus: 
              <div className="update-text-section">
                 <h1 className="update-title">
                   {status === 'checking' && 'Searching for updates'}
-                  {status === 'available' && `Lune v${updateStatus.info?.version}`}
-                  {status === 'downloading' && 'Updating Lune'}
+                  {status === 'available' && `Luniq v${updateStatus.info?.version}`}
+                  {status === 'downloading' && 'Updating Luniq'}
                    {status === 'downloaded' && 'Update Ready'}
                    {status === 'up-to-date' && 'Up to Date'}
                    {status === 'error' && 'Update Error'}
@@ -328,7 +328,7 @@ const MajorUpdateModal = ({ updateStatus, setAppUpdateStatus }: { updateStatus: 
                    {status === 'available' && !releaseNotes && 'A new version is available with improved performance and stability.'}
                    {status === 'downloading' && `Updating your experience... ${progress}%`}
                     {status === 'downloaded' && !releaseNotes && 'The update is ready to be installed.'}
-                    {status === 'up-to-date' && "You're running the latest version of Lune."}
+                    {status === 'up-to-date' && "You're running the latest version of Luniq."}
                     {status === 'error' && (() => {
                       const msg = updateStatus.message || '';
                       if (msg.length > 100 || msg.includes('Content-Security-Policy') || msg.includes('github')) {

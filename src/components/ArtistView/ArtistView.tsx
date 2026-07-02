@@ -17,7 +17,7 @@ interface PlatformCookie {
 
 import { usePlayer } from '../../context/PlayerContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { LuneTrack, normalizeTrack } from '../../types/track';
+import { LuniqTrack, normalizeTrack } from '../../types/track';
 import { DownloadIndicator } from '../DownloadIndicator/DownloadIndicator';
 import { formatDuration, formatMonthlyListeners } from '../../utils/format';
 import { usePlayback } from '../../context/PlaybackContext';
@@ -110,7 +110,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                 await api.artist.follow([artistId]);
                 setIsFollowing(true);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (err) {
             console.error('[ArtistView] Failed to toggle follow state:', err);
         }
@@ -164,7 +164,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
         }
     };
 
-    const handleTogglePlaylistTrack = async (pId: string, track: LuneTrack) => {
+    const handleTogglePlaylistTrack = async (pId: string, track: LuniqTrack) => {
         try {
             const isAlreadyIn = trackPlaylists.includes(pId);
             let success;
@@ -180,7 +180,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                 });
             }
             if (success) {
-                window.dispatchEvent(new Event('lune:playlist-tracks-update'));
+                window.dispatchEvent(new Event('luniq:playlist-tracks-update'));
                 
                 const updatedPlaylists = await window.ipcRenderer.invoke('get-track-playlists', track.id);
                 setTrackPlaylists(updatedPlaylists);
@@ -190,7 +190,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
         }
     };
 
-    const handleToggleFavorite = async (track: LuneTrack) => {
+    const handleToggleFavorite = async (track: LuniqTrack) => {
         try {
             if (menuFavoriteState) {
                 await window.ipcRenderer.invoke('remove-local-favorite', track.id);
@@ -199,13 +199,13 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                 await window.ipcRenderer.invoke('add-local-favorite', track);
                 setMenuFavoriteState(true);
             }
-            window.dispatchEvent(new Event('lune:playlist-update'));
+            window.dispatchEvent(new Event('luniq:playlist-update'));
         } catch (e) {
             console.error("Failed to toggle favorite", e);
         }
     };
 
-    const handleToggleDownload = async (track: LuneTrack) => {
+    const handleToggleDownload = async (track: LuniqTrack) => {
         try {
             if (menuDownloadState) {
                 const success = await window.ipcRenderer.invoke('remove-download', track.id);
@@ -221,7 +221,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (menuTrackId && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.lune-dropdown')) {
+            if (menuTrackId && trackMenuRef.current && !trackMenuRef.current.contains(event.target as Node) && !(event.target as HTMLElement).closest('.luniq-dropdown')) {
                 setMenuTrackId(null);
                 setMenuPosition(null);
                 setShowPlaylistSubmenu(false);
@@ -251,7 +251,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
 
                                
     const topTracksData = artistData?.discography?.topTracks?.items || [];
-    const topTracks: LuneTrack[] = topTracksData.map((item: any) => {
+    const topTracks: LuniqTrack[] = topTracksData.map((item: any) => {
         const tr = item.track || item;
         const normalized = normalizeTrack(tr, lowDataMode);
         if (item.playcount || tr.playcount) {
@@ -325,7 +325,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                                                             
                         if (!normalized.albumArt || normalized.albumArt.includes('data:image/svg')) normalized.albumArt = coverUrl;
                         return normalized;
-                    }).filter((t: any): t is LuneTrack => t !== null);
+                    }).filter((t: any): t is LuniqTrack => t !== null);
                     
                     extraTracks = [...extraTracks, ...tracks];
                 }
@@ -358,7 +358,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
     };
 
                                                                  
-    const handleTrackPlay = (track: LuneTrack, _index: number) => {
+    const handleTrackPlay = (track: LuniqTrack, _index: number) => {
         if (onTrackSelect && track) {
             onTrackSelect(track, topTracks);
         }
@@ -410,8 +410,8 @@ const ArtistView: React.FC<ArtistViewProps> = ({
     if (loading) {
         return (
             <div className="artist-view-container">
-                <div className="lune-loading-container">
-                    <div className="lune-loading-animation">
+                <div className="luniq-loading-container">
+                    <div className="luniq-loading-animation">
                         <div className="bar bar1"></div>
                         <div className="bar bar2"></div>
                         <div className="bar bar3"></div>
@@ -428,12 +428,12 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '16px' }}>
                     <h2>{t('error.title')}</h2>
                     <p style={{ color: 'var(--text-dim)' }}>{error}</p>
-                    <div className="lune-nav-btn-container">
-                        <button onClick={onBack} className="lune-nav-btn" title="Back">
+                    <div className="luniq-nav-btn-container">
+                        <button onClick={onBack} className="luniq-nav-btn" title="Back">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
                         {onHome && (
-                            <button onClick={onHome} className="lune-nav-btn" title="Home">
+                            <button onClick={onHome} className="luniq-nav-btn" title="Home">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                             </button>
                         )}
@@ -517,7 +517,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                         </svg>
                     </button>
                     {isDownloading && (
-                        <div className="lune-download-circle-spinner" />
+                        <div className="luniq-download-circle-spinner" />
                     )}
                 </div>
             </div>
@@ -560,7 +560,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                         </button>
                                         {menuTrackId === track.id && (
                                             <div 
-                                                className={`lune-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
+                                                className={`luniq-dropdown ${menuPosition?.isBottom ? 'open-up' : 'open-down'}`}
                                                 style={menuPosition ? {
                                                     position: 'fixed',
                                                     top: menuPosition.isBottom ? 'auto' : `${menuPosition.y + 8}px`,
@@ -570,7 +570,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                     zIndex: 9999
                                                 } : {}}
                                             >
-                                                <button className="lune-dropdown-item" onClick={(e) => {
+                                                <button className="luniq-dropdown-item" onClick={(e) => {
                                                     e.stopPropagation();
                                                     onPlayNext?.(track);
                                                     setMenuTrackId(null);
@@ -582,7 +582,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                     </svg>
                                                     {t('search.playNext')}
                                                 </button>
-                                                <button className="lune-dropdown-item" onClick={(e) => {
+                                                <button className="luniq-dropdown-item" onClick={(e) => {
                                                     e.stopPropagation();
                                                     onAddToQueue?.(track);
                                                     setMenuTrackId(null);
@@ -591,7 +591,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14" /></svg>
                                                     {t('search.addToQueue')}
                                                 </button>
-                                                <button className="lune-dropdown-item" onClick={(e) => {
+                                                <button className="luniq-dropdown-item" onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleToggleFavorite(track);
                                                     setMenuTrackId(null);
@@ -614,7 +614,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                     )}
                                                 </button>
                                                 {menuDownloadState !== null && (
-                                                    <button className="lune-dropdown-item" onClick={(e) => {
+                                                    <button className="luniq-dropdown-item" onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleToggleDownload(track);
                                                         setMenuTrackId(null);
@@ -628,9 +628,9 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                         {menuDownloadState ? t('search.removeDownload') : t('search.download')}
                                                     </button>
                                                 )}
-                                                <div className="lune-dropdown-divider" />
+                                                <div className="luniq-dropdown-divider" />
                                                 <button 
-                                                    className={`lune-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
+                                                    className={`luniq-dropdown-item ${showPlaylistSubmenu ? 'active' : ''}`}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setShowPlaylistSubmenu(!showPlaylistSubmenu);
@@ -645,14 +645,14 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 'auto', transform: showPlaylistSubmenu ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}><polyline points="9 18 15 12 9 6"></polyline></svg>
                                                 </button>
                                                 {showPlaylistSubmenu && (
-                                                    <div className="lune-submenu">
+                                                    <div className="luniq-submenu">
                                                         {localPlaylists.length > 0 ? (
                                                             localPlaylists.map((p) => {
                                                                 const isInPlaylist = trackPlaylists.includes(p.id);
                                                                 return (
                                                                     <button 
                                                                         key={p.id} 
-                                                                        className={`lune-dropdown-item ${isInPlaylist ? 'active' : ''}`}
+                                                                        className={`luniq-dropdown-item ${isInPlaylist ? 'active' : ''}`}
                                                                         onClick={(e) => {
                                                                             e.stopPropagation();
                                                                             handleTogglePlaylistTrack(p.id, track);
@@ -664,7 +664,7 @@ const ArtistView: React.FC<ArtistViewProps> = ({
                                                                 );
                                                             })
                                                         ) : (
-                                                            <div className="lune-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
+                                                            <div className="luniq-dropdown-item disabled" style={{ opacity: 0.5, cursor: 'default' }}>{t('search.noLocalPlaylists')}</div>
                                                         )}
                                                     </div>
                                                 )}

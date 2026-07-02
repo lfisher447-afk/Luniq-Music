@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './StarPopup.css';
-import luneLogo from '../../assets/Lune.png';
+import luniqLogo from '../../assets/Luniq.png';
 
 const StarPopup = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -30,7 +30,7 @@ const StarPopup = () => {
     }, []);
 
     const handleStar = async () => {
-        await window.ipcRenderer.invoke('open-external', 'https://github.com/saraansx/Lune-Music');
+        await window.ipcRenderer.invoke('open-external', 'https://github.com/saraansx/Luniq-Music');
         await window.ipcRenderer.invoke('set-setting', 'has_starred', true);
         setIsVisible(false);
     };
@@ -56,14 +56,14 @@ const StarPopup = () => {
                 
                 <div className="star-popup-content">
                     <div className="star-logo-wrapper">
-                        <img src={luneLogo} alt="Lune Logo" className="star-lune-logo" />
+                        <img src={luniqLogo} alt="Luniq Logo" className="star-luniq-logo" />
                     </div>
                     
                     <div className="star-text-stack">
-                        <h2 className="star-popup-title">Support Lune</h2>
+                        <h2 className="star-popup-title">Support Luniq</h2>
                         
                         <p className="star-popup-note">
-                            Hey there! I'm <b>saraansx</b>, the developer of Lune. <br /><br />
+                            Hey there! I'm <b>saraansx</b>, the developer of Luniq. <br /><br />
                             I hope you're enjoying your ad-free music journey. If so, would you mind starring our repository? It's a small click for you, but it truly helps the project grow and stay alive!
                         </p>
                         

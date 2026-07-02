@@ -48,11 +48,11 @@ const Login = ({ onLoginSuccess }: LoginProps) => {
             <div className="login-center">
                 {}
                 <div className="moon-icon">
-                    <img src={mainLogo} alt="Lune" className="moon-img" draggable={false} />
+                    <img src={mainLogo} alt="Luniq" className="moon-img" draggable={false} />
                 </div>
 
                 {}
-                <h1 className="brand-title">Lune</h1>
+                <h1 className="brand-title">Luniq</h1>
                 <p className="brand-tagline">{t('login.tagline')}</p>
                 <p className="brand-description">
                     {t('login.description')}

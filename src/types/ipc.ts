@@ -1,4 +1,4 @@
-import { LuneTrack } from './track';
+import { LuniqTrack } from './track';
 
 export interface IPCChannels {
     
@@ -13,7 +13,7 @@ export interface IPCChannels {
     'remove-from-library': (id: string) => Promise<boolean>;
     'create-playlist': (data: { name: string, description: string, artwork: string | null }) => Promise<{ success: boolean; playlist?: any; error?: string }>;
     'get-playlist': (id: string) => Promise<any>;
-    'get-playlist-tracks': (id: string) => Promise<LuneTrack[]>;
+    'get-playlist-tracks': (id: string) => Promise<LuniqTrack[]>;
     'update-playlist': (data: { id: string, name: string, description: string, artwork: string | null }) => Promise<{ success: boolean; error?: string }>;
     'delete-playlist': (id: string) => Promise<{ success: boolean; error?: string }>;
     'get-playlists': () => Promise<any[]>;
@@ -27,16 +27,16 @@ export interface IPCChannels {
     'check-is-pinned': (id: string) => Promise<boolean>;
 
     
-    'get-downloads': () => Promise<LuneTrack[]>;
+    'get-downloads': () => Promise<LuniqTrack[]>;
     'check-is-downloaded': (id: string) => Promise<boolean>;
     'remove-download': (id: string) => Promise<boolean>;
     'download-track': (track: any) => Promise<boolean>;
 
     
-    'get-recent-tracks': () => Promise<LuneTrack[]>;
-    'add-recent-track': (track: LuneTrack) => Promise<void>;
+    'get-recent-tracks': () => Promise<LuniqTrack[]>;
+    'add-recent-track': (track: LuniqTrack) => Promise<void>;
     'clear-recent-tracks': () => Promise<void>;
-    'get-local-favorites': () => Promise<LuneTrack[]>;
+    'get-local-favorites': () => Promise<LuniqTrack[]>;
     'check-local-favorite': (id: string) => Promise<boolean>;
     'add-local-favorite': (track: any) => Promise<boolean>;
     'remove-local-favorite': (id: string) => Promise<boolean>;

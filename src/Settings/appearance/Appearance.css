@@ -152,7 +152,7 @@
     to   { opacity: 1; transform: scale(1)    translateX(0); }
 }
 
-.lune-toggle {
+.luniq-toggle {
     position: relative;
     width: 44px;
     height: 26px;
@@ -168,13 +168,13 @@
     padding: 0;
 }
 
-.lune-toggle.on {
+.luniq-toggle.on {
     background: var(--accent);
     border-color: transparent;
     box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.4);
 }
 
-.lune-toggle-thumb {
+.luniq-toggle-thumb {
     position: absolute;
     top: 3px;
     left: 3px;
@@ -187,19 +187,19 @@
     pointer-events: none;
 }
 
-.lune-toggle.on .lune-toggle-thumb {
+.luniq-toggle.on .luniq-toggle-thumb {
     transform: translateX(18px);
 }
 
-.lune-toggle:hover:not(.on) {
+.luniq-toggle:hover:not(.on) {
     background: rgba(255, 255, 255, 0.16);
 }
 
-.lune-toggle:hover.on {
+.luniq-toggle:hover.on {
     box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.55);
 }
 
-.lune-toggle:focus-visible {
+.luniq-toggle:focus-visible {
     outline: 2px solid rgba(var(--accent-rgb), 0.6);
     outline-offset: 2px;
 }

@@ -159,7 +159,7 @@
   justify-content: center;
 }
 
-.player-context-menu .lune-dropdown {
+.player-context-menu .luniq-dropdown {
   min-width: 220px;
   margin-bottom: 4px;
 }
@@ -194,11 +194,11 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
-.solid-dropdown .lune-dropdown-item:hover {
+.solid-dropdown .luniq-dropdown-item:hover {
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
-.solid-dropdown .lune-submenu {
+.solid-dropdown .luniq-submenu {
   background: rgba(255, 255, 255, 0.02) !important;
   border-color: rgba(255, 255, 255, 0.03) !important;
 }

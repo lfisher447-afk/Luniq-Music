@@ -48,7 +48,7 @@ const Updates: React.FC = () => {
                 {}
                 <div className="settings-row" onClick={() => handleToggle(!autoUpdate)} style={{ cursor: 'pointer' }}>
                     <div className="row-info">
-                        <span className="row-label">{t('updates.autoUpdateLabel') || 'Auto-Update Lune'}</span>
+                        <span className="row-label">{t('updates.autoUpdateLabel') || 'Auto-Update Luniq'}</span>
                         <span className="row-sub">{t('updates.autoUpdateSub') || 'Automatically download and install updates in the background.'}</span>
                     </div>
                     <label className="about-switch" onClick={(e) => e.stopPropagation()}>

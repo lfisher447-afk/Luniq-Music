@@ -190,13 +190,13 @@ const Playback: React.FC = () => {
                         <span className="row-label">{t('playback.autoplay')}</span>
                         <span className="row-sub">{t('playback.autoplaySub')}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={autoplayEnabled} 
                             onChange={(e) => setAutoplayEnabled(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
 
@@ -205,13 +205,13 @@ const Playback: React.FC = () => {
                         <span className="row-label">{t('playback.normalize')}</span>
                         <span className="row-sub">{t('playback.normalizeSub')}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={normalizeVolume} 
                             onChange={(e) => setNormalizeVolume(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
 
@@ -220,13 +220,13 @@ const Playback: React.FC = () => {
                         <span className="row-label">{t('playback.lowData')}</span>
                         <span className="row-sub">{t('playback.lowDataSub')}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={lowDataMode} 
                             onChange={(e) => setLowDataMode(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
 
@@ -235,13 +235,13 @@ const Playback: React.FC = () => {
                         <span className="row-label">{t('playback.mono') || 'Mono Audio'}</span>
                         <span className="row-sub">{t('playback.monoSub') || 'Combines the left and right audio channels into one.'}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={monoAudio} 
                             onChange={(e) => setMonoAudio(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
 
@@ -250,13 +250,13 @@ const Playback: React.FC = () => {
                         <span className="row-label">{t('playback.equalizer') || 'Equalizer'}</span>
                         <span className="row-sub">{t('playback.equalizerSub') || 'Fine-tune your audio with custom frequency bands.'}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={eqEnabled} 
                             onChange={(e) => setEqEnabled(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
 

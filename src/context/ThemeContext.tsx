@@ -145,16 +145,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [accentColor,    setAccentColorState]    = useState<AccentColor>('blue');
   const [layoutDensity,  setLayoutDensityState]  = useState<LayoutDensity>('comfortable');
   const [dynamicColor,   setDynamicColorState]   = useState<boolean>(
-    () => localStorage.getItem('lune_dynamic_color') === 'true',
+    () => localStorage.getItem('luniq_dynamic_color') === 'true',
   );
   const [isInApp, setIsInApp] = useState(false);
 
   
   useEffect(() => {
-    const savedColor = localStorage.getItem('lune_accent_color') as AccentColor;
+    const savedColor = localStorage.getItem('luniq_accent_color') as AccentColor;
     if (savedColor && ACCENT_COLORS[savedColor]) setAccentColorState(savedColor);
 
-    const savedDensity = localStorage.getItem('lune_layout_density') as LayoutDensity;
+    const savedDensity = localStorage.getItem('luniq_layout_density') as LayoutDensity;
     if (savedDensity) setLayoutDensityState(savedDensity);
   }, []);
 
@@ -181,17 +181,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setAccentColor = (color: AccentColor) => {
     setAccentColorState(color);
-    localStorage.setItem('lune_accent_color', color);
+    localStorage.setItem('luniq_accent_color', color);
   };
 
   const setLayoutDensity = (density: LayoutDensity) => {
     setLayoutDensityState(density);
-    localStorage.setItem('lune_layout_density', density);
+    localStorage.setItem('luniq_layout_density', density);
   };
 
   const setDynamicColor = (v: boolean) => {
     setDynamicColorState(v);
-    localStorage.setItem('lune_dynamic_color', String(v));
+    localStorage.setItem('luniq_dynamic_color', String(v));
     
     if (!v) {
       const theme = ACCENT_COLORS[accentColor];

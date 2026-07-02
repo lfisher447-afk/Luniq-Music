@@ -381,8 +381,8 @@ function getClientUserAgent(client: StreamClient): string {
 }
 
       const ua = getClientUserAgent(client);
-      if (!url.includes('__lune_ua=')) {
-        url += `&__lune_ua=${encodeURIComponent(ua)}`;
+      if (!url.includes('__luniq_ua=')) {
+        url += `&__luniq_ua=${encodeURIComponent(ua)}`;
       }
 
 

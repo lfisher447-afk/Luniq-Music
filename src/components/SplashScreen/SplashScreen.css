@@ -38,9 +38,9 @@
 .splash-title {
     font-size: 20px;
     font-weight: 300;
-    letter-spacing: 0.6em;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    text-indent: 0.6em;
+    text-indent: 0.4em;
     color: var(--text-main, #ffffff);
     margin: 0;
     text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);

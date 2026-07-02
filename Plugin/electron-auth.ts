@@ -13,15 +13,15 @@ export class ElectronSpotifyAuth {
   async login(): Promise<SpotifyCredentials> {
     return new Promise((resolve, reject) => {
       const iconPath = app.isPackaged
-        ? path.join(process.resourcesPath, "Lune.png")
-        : path.join(app.getAppPath(), "src", "assets", "Lune.png");
+        ? path.join(process.resourcesPath, "Luniq.png")
+        : path.join(app.getAppPath(), "src", "assets", "Luniq.png");
 
       const partition = `temp-login-${Date.now()}`;
 
       const loginWindow = new BrowserWindow({
         width: 800,
         height: 700,
-        title: "Lune",
+        title: "Luniq",
         icon: iconPath,
         webPreferences: {
           nodeIntegration: false,

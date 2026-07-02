@@ -1,10 +1,10 @@
 {
-  "name": "lune-music",
+  "name": "luniq-music",
   "license": "GPL-3.0",
   "private": true,
   "version": "1.0.6",
   "buildVersion": "7",
-  "description": "Lune Open Source Music Player",
+  "description": "Luniq Open Source Music Player",
   "author": "saraansx",
   "type": "module",
   "scripts": {

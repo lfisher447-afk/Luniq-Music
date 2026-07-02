@@ -27,8 +27,8 @@ const LyricsView: React.FC = () => {
             const customEvent = e as CustomEvent;
             setCurrentTime(customEvent.detail.currentTime);
         };
-        window.addEventListener('lune:timeupdate', handleTimeUpdate);
-        return () => window.removeEventListener('lune:timeupdate', handleTimeUpdate);
+        window.addEventListener('luniq:timeupdate', handleTimeUpdate);
+        return () => window.removeEventListener('luniq:timeupdate', handleTimeUpdate);
     }, []);
     
     useEffect(() => {

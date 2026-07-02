@@ -1,6 +1,6 @@
 import { ALBUM_PLACEHOLDER } from '../constants/assets';
 
-export interface LuneTrack {
+export interface LuniqTrack {
     id: string;
     queueId?: string; 
     name: string;
@@ -28,7 +28,7 @@ export const resolveSpotifyImageUrl = (url: string): string => {
                                                                              
                                                 
    
-export const normalizeTrack = (track: any, lowDataMode: boolean = false): LuneTrack => {
+export const normalizeTrack = (track: any, lowDataMode: boolean = false): LuniqTrack => {
     if (!track) {
         return {
             id: '',

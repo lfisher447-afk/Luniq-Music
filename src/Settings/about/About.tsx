@@ -132,9 +132,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
         <div className="about-modal-overlay" onClick={onClose}>
             <div className="about-modal-glass" onClick={(e) => e.stopPropagation()}>
                 <div className="about-modal-scroll">
-                <img src={mainLogo} alt="Lune" className="about-modal-logo" />
+                <img src={mainLogo} alt="Luniq" className="about-modal-logo" />
 
-                <h2 className="about-modal-name">Lune</h2>
+                <h2 className="about-modal-name">Luniq</h2>
 
                 <p className="about-modal-desc">
                     {t('about.description')}
@@ -143,7 +143,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                 <div className="about-modal-links">
                     <button
                         className="about-modal-link-btn"
-                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Lune-Music')}
+                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Luniq-Music')}
                         title="GitHub"
                     >
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -179,7 +179,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                     <span className="about-meta-label">{t('about.license')}</span>
                     <span
                         className="about-meta-value about-meta-link"
-                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Lune-Music?tab=GPL-3.0-1-ov-file')}
+                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Luniq-Music?tab=GPL-3.0-1-ov-file')}
                     >
                         GPL-3.0
                     </span>
@@ -188,9 +188,9 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                     <span className="about-meta-label">{t('about.repository')}</span>
                     <span
                         className="about-meta-value about-meta-link"
-                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Lune-Music')}
+                        onClick={() => window.ipcRenderer?.invoke('open-external', 'https://github.com/saraansx/Luniq-Music')}
                     >
-                        github.com/saraansx/Lune-Music
+                        github.com/saraansx/Luniq-Music
                     </span>
                 </div>
                 <div className="about-modal-meta">
@@ -267,7 +267,7 @@ const About: React.FC = () => {
 
     return (
         <>
-            <div className="settings-language-card about-lune-card">
+            <div className="settings-language-card about-luniq-card">
                 <div className="settings-account-header">
                     <h2 className="settings-account-title">{t('about.title')}</h2>
                     <p className="settings-account-description">{t('about.sub')}</p>

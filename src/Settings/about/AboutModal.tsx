@@ -41,11 +41,11 @@ const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
 
                 {}
                 <div className="about-modal-logo-wrap">
-                    <img src={mainLogo} alt="Lune" className="about-modal-logo" />
+                    <img src={mainLogo} alt="Luniq" className="about-modal-logo" />
                 </div>
 
                 {}
-                <h2 className="about-modal-name">Lune</h2>
+                <h2 className="about-modal-name">Luniq</h2>
                 <span className="about-modal-version">v{version}</span>
 
                 <p className="about-modal-desc">

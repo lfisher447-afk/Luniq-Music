@@ -1,8 +1,8 @@
 ; ============================================================
-; Lune – Custom NSIS Installer Script
+; Luniq – Custom NSIS Installer Script
 ; ============================================================
-; Flow: License → Install Location → Installing → Completing Lune Setup
-;       (Run Lune ✓ + Create Desktop Shortcut □  →  Finish)
+; Flow: License → Install Location → Installing → Completing Luniq Setup
+;       (Run Luniq ✓ + Create Desktop Shortcut □  →  Finish)
 ; ============================================================
 
 !include "nsDialogs.nsh"
@@ -36,8 +36,8 @@ Function finPageCreate
     Abort
   ${EndIf}
 
-  ; "Run Lune" checkbox – checked by default
-  ${NSD_CreateCheckbox} 10u 10u 100% 15u "Run Lune"
+  ; "Run Luniq" checkbox – checked by default
+  ${NSD_CreateCheckbox} 10u 10u 100% 15u "Run Luniq"
   Pop $CheckboxLaunch
   ${NSD_SetState} $CheckboxLaunch ${BST_CHECKED}
 
@@ -61,15 +61,15 @@ Function finPageLeave
   ${NSD_GetState} $CheckboxStartup $CheckStartupState
 
   ${If} $CheckDesktopState == ${BST_CHECKED}
-    CreateShortCut "$DESKTOP\Lune.lnk" "$INSTDIR\Lune.exe" "" "$INSTDIR\Lune.exe" 0
+    CreateShortCut "$DESKTOP\Luniq.lnk" "$INSTDIR\Luniq.exe" "" "$INSTDIR\Luniq.exe" 0
   ${EndIf}
 
   ${If} $CheckStartupState == ${BST_CHECKED}
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Lune" '"$INSTDIR\Lune.exe"'
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Luniq" '"$INSTDIR\Luniq.exe"'
   ${EndIf}
 
   ${If} $CheckLaunchState == ${BST_CHECKED}
-    Exec '"$INSTDIR\Lune.exe"'
+    Exec '"$INSTDIR\Luniq.exe"'
   ${EndIf}
 FunctionEnd
 
@@ -85,6 +85,6 @@ FunctionEnd
 
 ; ── Uninstall Cleanup ────────────────────────────────────────
 !macro customUnInstall
-  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Lune"
-  Delete "$DESKTOP\Lune.lnk"
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Luniq"
+  Delete "$DESKTOP\Luniq.lnk"
 !macroend

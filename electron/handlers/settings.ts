@@ -63,9 +63,9 @@ export function registerSettingsHandlers() {
 
     ipcMain.handle('get-github-commits', async () => {
         try {
-            const response = await fetch('https://api.github.com/repos/saraansx/Lune-Music/commits?per_page=10', {
+            const response = await fetch('https://api.github.com/repos/saraansx/Luniq-Music/commits?per_page=10', {
                 headers: {
-                    'User-Agent': 'Lune-App'
+                    'User-Agent': 'Luniq-App'
                 }
             });
             if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -136,13 +136,13 @@ const Desktop: React.FC = () => {
                         <span className="row-label">{t('desktop.discordRPC') || 'Discord Rich Presence'}</span>
                         <span className="row-sub">{t('desktop.discordRPCSub') || 'Show the currently playing song on your Discord profile.'}</span>
                     </div>
-                    <label className="lune-switch">
+                    <label className="luniq-switch">
                         <input 
                             type="checkbox" 
                             checked={discordRPC} 
                             onChange={(e) => handleDiscordRPCChange(e.target.checked)} 
                         />
-                        <span className="lune-switch-slider"></span>
+                        <span className="luniq-switch-slider"></span>
                     </label>
                 </div>
             </div>

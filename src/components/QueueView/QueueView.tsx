@@ -355,7 +355,7 @@ const QueueView: React.FC<{ onClose: () => void; onArtistSelect?: (id: string | 
                                             </button>
                                             {contextMenu?.id === `history-${track.id}-${index}` && (
                                                 <div 
-                                                    className={`lune-dropdown history-dropdown ${contextMenu.isBottom ? 'open-up' : 'open-down'}`}
+                                                    className={`luniq-dropdown history-dropdown ${contextMenu.isBottom ? 'open-up' : 'open-down'}`}
                                                     style={{
                                                         position: 'fixed',
                                                         top: contextMenu.isBottom ? 'auto' : `${contextMenu.y + 8}px`,
@@ -366,7 +366,7 @@ const QueueView: React.FC<{ onClose: () => void; onArtistSelect?: (id: string | 
                                                         zIndex: 1000
                                                     }}
                                                 >
-                                                    <button className="lune-dropdown-item" onClick={(e) => {
+                                                    <button className="luniq-dropdown-item" onClick={(e) => {
                                                         e.stopPropagation();
                                                         handlePlayNext(track);
                                                         setContextMenu(null);
@@ -377,7 +377,7 @@ const QueueView: React.FC<{ onClose: () => void; onArtistSelect?: (id: string | 
                                                         </svg>
                                                         {t('queue.playNext')}
                                                     </button>
-                                                    <button className="lune-dropdown-item" onClick={(e) => {
+                                                    <button className="luniq-dropdown-item" onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleAddToQueue(track);
                                                         setContextMenu(null);

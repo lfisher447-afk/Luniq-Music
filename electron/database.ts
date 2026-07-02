@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import Database from 'better-sqlite3';
 
-const dbPath = path.join(app.getPath('userData'), 'database', 'lune.db');
+const dbPath = path.join(app.getPath('userData'), 'database', 'luniq.db');
 const dbDir = path.dirname(dbPath);
 
 if (!fs.existsSync(dbDir)) {

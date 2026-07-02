@@ -302,7 +302,7 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
-.sidebar-context-menu .lune-dropdown-item {
+.sidebar-context-menu .luniq-dropdown-item {
   font-size: 13px;
   padding: 10px 12px;
 }
@@ -349,7 +349,7 @@
   min-width: 180px;
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
   z-index: 100;
-  animation: luneDropdownFadeDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: luniqDropdownFadeDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: top right;
 }
 

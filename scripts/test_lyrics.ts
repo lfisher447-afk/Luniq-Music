@@ -15,10 +15,10 @@ global.localStorage = {
 
 // Keep console functions enabled to see log errors
 
-// Load Spotify Credentials from Lune's local configuration file on disk
+// Load Spotify Credentials from Luniq's local configuration file on disk
 let spotifyCreds: any = null;
 try {
-  const configPath = path.join(os.homedir(), 'AppData/Roaming/lune-music/config.json');
+  const configPath = path.join(os.homedir(), 'AppData/Roaming/luniq-music/config.json');
   if (fs.existsSync(configPath)) {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     if (config.spotify_access_token) {
@@ -57,8 +57,8 @@ async function testSpotify() {
   console.log(`\n=== Testing Native Spotify Lyrics for "${testTrack.title}" by ${testTrack.artist} ===\n`);
 
   if (!spotifyCreds || !spotifyCreds.accessToken) {
-    console.log("❌ ERROR: No Spotify token found in C:\\Users\\saraa\\AppData\\Roaming\\lune-music\\config.json.");
-    console.log("Please make sure you are logged into Spotify inside the Lune app first!");
+    console.log("❌ ERROR: No Spotify token found in C:\\Users\\saraa\\AppData\\Roaming\\luniq-music\\config.json.");
+    console.log("Please make sure you are logged into Spotify inside the Luniq app first!");
     return;
   }
 
