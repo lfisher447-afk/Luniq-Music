@@ -1,4 +1,3 @@
-import { getHash } from "./hash-registry.js";
 
 export class SpotifyRadioEndpoint {
     private accessToken: string;
@@ -94,58 +93,7 @@ export class SpotifyRadioEndpoint {
             // Silenced primary error
         }
 
-        try {
-            const hash = await getHash("Radio", "fetchSeedSuggestions");
-            const body = {
-                variables: { uri: seedUri },
-                operationName: 'fetchSeedSuggestions',
-                extensions: {
-                    persistedQuery: {
-                        version: 1,
-                        sha256Hash: hash,
-                    },
-                },
-            };
 
-            const res = await fetch('https://api-partner.spotify.com/pathfinder/v2/query', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${this.accessToken}`,
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify(body),
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                const items = data?.data?.seedSuggestions?.items ?? [];
-                const parsed: RadioTrack[] = items
-                    .filter((item: any) => item?.uri && item?.name)
-                    .slice(0, count)
-                    .map((item: any): RadioTrack => {
-                        const id = item.uri.split(':').pop() ?? item.uri;
-                        const artists = (item.artists?.items ?? []).map((a: any) => ({
-                            id: (a.uri ?? '').split(':').pop() ?? '',
-                            name: a.profile?.name ?? a.name ?? 'Unknown',
-                        }));
-                        return {
-                            id,
-                            name: item.name,
-                            artist: artists.map((a: any) => a.name).join(', '),
-                            artists,
-                            albumName: item.albumOfTrack?.name ?? '',
-                            albumArt: item.albumOfTrack?.coverArt?.sources?.[0]?.url ?? '',
-                            durationMs: item.duration?.totalMilliseconds ?? 0,
-                        };
-                    });
-
-                if (parsed.length > 0) return parsed;
-            } else if (res.status === 401 && this.onUnauthorized) {
-                this.onUnauthorized();
-            }
-        } catch (e) {
-        }
 
         return [];
     }
