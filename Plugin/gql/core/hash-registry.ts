@@ -1,5 +1,5 @@
 const GIST_URL =
-  "https://gist.githubusercontent.com/saraansx/c50367808cbbf6ea7352920e4b556ac3/raw/44c5817caf2eeb49dacff32c4baf2c192dcfb57f/spotify_hashes.json";
+  "https://gist.githubusercontent.com/saraansx/c50367808cbbf6ea7352920e4b556ac3/raw/spotify_hashes.json";
 
 const CACHE_TTL_MS = 30 * 60 * 1000;
 
