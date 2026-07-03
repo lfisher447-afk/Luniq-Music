@@ -289,7 +289,6 @@ const NowPlayingView: React.FC<{
                                 <div className="np-section np-spotify-credits-section">
                                     <div className="np-spotify-credits-header">
                                         <div className="np-section-title" style={{ marginBottom: 0 }}>{t('nowPlaying.credits')}</div>
-                                        <button className="np-spotify-show-all">Show all</button>
                                     </div>
                                     <div className="np-spotify-credits-list">
                                         {credits.map((person, idx) => (

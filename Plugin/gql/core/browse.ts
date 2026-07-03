@@ -223,9 +223,11 @@ class SpotifyBrowseEndpoint {
             .post("query", {
                 body: {
                     variables: {
+                        homeEndUserIntegration: "INTEGRATION_WEB_PLAYER",
                         timeZone,
                         sp_t: spTCookie,
                         facet: "",
+                        includeEpisodeContentRatingsV2: true,
                         sectionItemsLimit: limit,
                     },
                     operationName: "home",
@@ -236,8 +238,7 @@ class SpotifyBrowseEndpoint {
                         },
                     },
                 },
-            })
-            ;
+            });
 
         SpotifyError.mayThrow(res);
 
@@ -283,9 +284,11 @@ class SpotifyBrowseEndpoint {
                 body: {
                     variables: {
                         uri: `spotify:section:${id}`,
+                        homeEndUserIntegration: "INTEGRATION_WEB_PLAYER",
                         timeZone,
                         sp_t: spTCookie,
                         facet: "",
+                        includeEpisodeContentRatingsV2: true,
                         sectionItemsOffset: offset,
                         sectionItemsLimit: limit,
                     },
@@ -297,8 +300,7 @@ class SpotifyBrowseEndpoint {
                         },
                     },
                 },
-            })
-            ;
+            });
 
         SpotifyError.mayThrow(res);
 

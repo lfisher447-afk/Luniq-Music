@@ -415,14 +415,14 @@
 
 /* Spotify Credits Section UI */
 .np-spotify-credits-section {
-  padding: 24px;
+  padding: 12px 24px 24px;
 }
 
 .np-spotify-credits-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .np-spotify-show-all {
@@ -479,7 +479,7 @@
 .np-spotify-credit-name {
   color: var(--text-main);
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
