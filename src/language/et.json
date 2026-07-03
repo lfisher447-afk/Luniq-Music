@@ -331,5 +331,9 @@
     "ytdlp.checking": "Taasesituse draiveri uuenduste kontrollimine…",
     "ytdlp.updating": "Taasesitussüsteemi optimeerimine (toimub üks kord)…",
     "ytdlp.ready": "Taasesitussüsteem on valmis",
-    "ytdlp.error": "Taasesituse uuendamine ebaõnnestus"
+    "ytdlp.error": "Taasesituse uuendamine ebaõnnestus",
+    "nowPlaying.credits": "Tiitrid",
+    "nowPlaying.performedBy": "Esitanud",
+    "nowPlaying.writtenBy": "Kirjutanud",
+    "nowPlaying.producedBy": "Tootnud"
 }
