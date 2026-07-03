@@ -34,6 +34,7 @@ const NowPlayingView: React.FC<{
     const [artistInfo, setArtistInfo] = useState<ArtistInfo | null>(null);
     const [canvasUrl, setCanvasUrl] = useState<string | null>(null);
     const [credits, setCredits] = useState<any[]>([]);
+    const [creditFollowState, setCreditFollowState] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -117,8 +118,9 @@ const NowPlayingView: React.FC<{
                         findCredits(creditsData);
                         
                         if (contributors.length > 0) {
+                            let finalCredits: any[];
                             if (contributors[0].roleTitle) {
-                                setCredits(contributors);
+                                finalCredits = contributors;
                             } else {
                                 const personGroups: Record<string, { uri?: string, roles: string[] }> = {};
                                 contributors.forEach((c: any) => {
@@ -130,12 +132,26 @@ const NowPlayingView: React.FC<{
                                     }
                                 });
                                 
-                                const formattedCredits = Object.entries(personGroups).map(([name, data]) => ({
+                                finalCredits = Object.entries(personGroups).map(([name, data]) => ({
                                     name,
                                     uri: data.uri,
                                     roles: data.roles
                                 }));
-                                setCredits(formattedCredits);
+                            }
+                            setCredits(finalCredits);
+
+                            const artistIds = finalCredits
+                                .filter((p: any) => p.uri?.startsWith('spotify:artist:') && p.roles.some((r: string) => r.toLowerCase().includes('artist')))
+                                .map((p: any) => p.uri.split(':')[2]);
+                            if (artistIds.length > 0) {
+                                try {
+                                    const follows = await gql.user.isInLibrary(artistIds, { itemType: 'artist' });
+                                    const state: Record<string, boolean> = {};
+                                    artistIds.forEach((id: string, idx: number) => { state[id] = follows[idx]; });
+                                    setCreditFollowState(state);
+                                } catch (e) {
+                                    console.error("Failed to fetch follow states for credits", e);
+                                }
                             }
                         } else {
                             console.log("No credits found in response:", creditsData);
@@ -155,6 +171,23 @@ const NowPlayingView: React.FC<{
         fetchInfo();
     }, [currentTrack?.id, accessToken]);
 
+
+    const toggleCreditFollow = async (e: React.MouseEvent, person: any) => {
+        e.stopPropagation();
+        const artistId = person.uri?.split(':')[2];
+        if (!artistId) return;
+        const isFollowing = creditFollowState[artistId];
+        try {
+            if (isFollowing) {
+                await api.artist.unfollow([artistId]);
+            } else {
+                await api.artist.follow([artistId]);
+            }
+            setCreditFollowState(prev => ({ ...prev, [artistId]: !isFollowing }));
+        } catch (err) {
+            console.error('[NowPlayingView] Failed to toggle follow:', err);
+        }
+    };
 
     const handleDescriptionClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLElement;
@@ -299,7 +332,14 @@ const NowPlayingView: React.FC<{
                                                         {person.roles.join(' • ')}
                                                     </div>
                                                 </div>
-                                                <button className="np-spotify-credit-follow">Follow</button>
+                                                {person.uri?.startsWith('spotify:artist:') && person.roles.some((r: string) => r.toLowerCase().includes('artist')) ? (
+                                                    <button
+                                                        className={`np-spotify-credit-follow${creditFollowState[person.uri.split(':')[2]] ? ' following' : ''}`}
+                                                        onClick={(e) => toggleCreditFollow(e, person)}
+                                                    >
+                                                        {creditFollowState[person.uri.split(':')[2]] ? t('search.following') : t('search.follow')}
+                                                    </button>
+                                                ) : null}
                                             </div>
                                         ))}
                                     </div>

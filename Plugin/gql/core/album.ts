@@ -92,7 +92,7 @@ class SpotifyAlbumEndpoint {
             .post("query", {
                 body: {
                     variables: {
-                        uris: albumIds.map((id) => `spotify:album:${id}`),
+                        libraryItemUris: albumIds.map((id) => `spotify:album:${id}`),
                     },
                     operationName: "addToLibrary",
                     extensions: {
@@ -178,7 +178,7 @@ class SpotifyAlbumEndpoint {
         const res = await this.gqlClient.post("query", {
                 body: {
                     variables: {
-                        uris: albumIds.map((id) => `spotify:album:${id}`),
+                        libraryItemUris: albumIds.map((id) => `spotify:album:${id}`),
                     },
                     operationName: "removeFromLibrary",
                     extensions: {

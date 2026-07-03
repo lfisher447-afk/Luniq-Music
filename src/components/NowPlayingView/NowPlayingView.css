@@ -524,6 +524,11 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+.np-spotify-credit-follow.following {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .loading-skeleton {
   background: var(--card-hover);
   border-radius: 4px;

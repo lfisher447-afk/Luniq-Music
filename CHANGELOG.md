@@ -7,6 +7,12 @@ All notable changes to Luniq will be documented in this file.
 #### Added
 
 - **Track Credits Integration:** Built a beautiful new glassmorphic Track Credits UI in the Now Playing sidebar. Powered by a new Spotify GraphQL implementation, it dynamically fetches the real, comprehensive list of producers, composers, and lyricists for the currently playing track and elegantly formats them into interactive pill badges.
+- **Credits Follow Toggle:** The Track Credits section now has a working Follow/Following toggle button for artists. Clicking the button calls the Spotify `addToLibrary`/`removeFromLibrary` GraphQL mutation and persists the follow state. The button only appears for contributors with artist roles (Main Artist, Featured Artist), hiding it for lyricists, composers, and producers.
+
+#### Fixed
+
+- **Spotify Library Mutations (`addToLibrary`/`removeFromLibrary`):** Fixed a GraphQL variable naming mismatch across `artist`, `album`, `track`, and `playlist` endpoints where the API expected `libraryItemUris` but the code sent `uris`, causing HTTP 400 errors on follow, unfollow, save, and unsave operations.
+- **Credits Follow Button for Non-Artists:** Fixed an issue where the Follow button appeared for lyricists, composers, and producers in the Track Credits section. Following these non-artist contributors created empty artist pages in the library. The button now only renders for contributors whose roles include "Artist".
 
 ## [1.0.6] - 2026-07-03
 
