@@ -2,6 +2,12 @@
 
 All notable changes to Luniq will be documented in this file.
 
+## [2.0.0] - 2026-07-03
+
+#### Added
+
+- **Track Credits Integration:** Built a beautiful new glassmorphic Track Credits UI in the Now Playing sidebar. Powered by a new Spotify GraphQL implementation, it dynamically fetches the real, comprehensive list of producers, composers, and lyricists for the currently playing track and elegantly formats them into interactive pill badges.
+
 ## [1.0.6] - 2026-07-03
 
 #### Added

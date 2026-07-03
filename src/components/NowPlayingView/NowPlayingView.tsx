@@ -33,6 +33,7 @@ const NowPlayingView: React.FC<{
     const onClose = () => setShowFullNowPlaying(false);
     const [artistInfo, setArtistInfo] = useState<ArtistInfo | null>(null);
     const [canvasUrl, setCanvasUrl] = useState<string | null>(null);
+    const [credits, setCredits] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -42,6 +43,7 @@ const NowPlayingView: React.FC<{
             setLoading(true);
             setArtistInfo(null);
             setCanvasUrl(null);
+            setCredits([]);
 
             try {
                 const gql = api;
@@ -91,6 +93,55 @@ const NowPlayingView: React.FC<{
                         }
                     } catch (e) {
                         console.log("Track may not have a canvas available.");
+                    }
+
+                    try {
+                        const creditsData = await gql.credits.getTrackCredits(currentTrack.id);
+                        let contributors: any[] = [];
+                        
+                        const findCredits = (obj: any) => {
+                            if (contributors.length > 0) return;
+                            if (!obj || typeof obj !== 'object') return;
+                            
+                            if (obj.creditsTrait?.contributors?.items) {
+                                contributors = obj.creditsTrait.contributors.items;
+                                return;
+                            }
+                            if (Array.isArray(obj.roleCredits)) {
+                                contributors = obj.roleCredits;
+                                return;
+                            }
+                            Object.values(obj).forEach(findCredits);
+                        };
+                        
+                        findCredits(creditsData);
+                        
+                        if (contributors.length > 0) {
+                            if (contributors[0].roleTitle) {
+                                setCredits(contributors);
+                            } else {
+                                const personGroups: Record<string, { uri?: string, roles: string[] }> = {};
+                                contributors.forEach((c: any) => {
+                                    const name = c.name;
+                                    const role = c.role || c.roleGroup?.name || 'Other';
+                                    if (!personGroups[name]) personGroups[name] = { uri: c.uri, roles: [] };
+                                    if (!personGroups[name].roles.includes(role)) {
+                                        personGroups[name].roles.push(role);
+                                    }
+                                });
+                                
+                                const formattedCredits = Object.entries(personGroups).map(([name, data]) => ({
+                                    name,
+                                    uri: data.uri,
+                                    roles: data.roles
+                                }));
+                                setCredits(formattedCredits);
+                            }
+                        } else {
+                            console.log("No credits found in response:", creditsData);
+                        }
+                    } catch (e) {
+                        console.error("Failed to fetch track credits", e);
                     }
                 }
 
@@ -233,6 +284,28 @@ const NowPlayingView: React.FC<{
                                     <div style={{ color: 'var(--text-dim)' }}>{t('nowPlaying.artistUnavailable')}</div>
                                 )}
                             </div>
+
+                            {credits.length > 0 && (
+                                <div className="np-section np-spotify-credits-section">
+                                    <div className="np-spotify-credits-header">
+                                        <div className="np-section-title" style={{ marginBottom: 0 }}>{t('nowPlaying.credits')}</div>
+                                        <button className="np-spotify-show-all">Show all</button>
+                                    </div>
+                                    <div className="np-spotify-credits-list">
+                                        {credits.map((person, idx) => (
+                                            <div key={idx} className="np-spotify-credit-item">
+                                                <div className="np-spotify-credit-info">
+                                                    <div className="np-spotify-credit-name" onClick={() => person.uri && person.uri.startsWith('spotify:artist:') ? onArtistSelect?.(person.uri.split(':')[2], person.name) : null} style={{ cursor: person.uri && person.uri.startsWith('spotify:artist:') ? 'pointer' : 'default' }}>{person.name}</div>
+                                                    <div className="np-spotify-credit-roles">
+                                                        {person.roles.join(' • ')}
+                                                    </div>
+                                                </div>
+                                                <button className="np-spotify-credit-follow">Follow</button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -80,9 +80,12 @@ export class HttpClient {
                 }
 
                 let msg = `HTTP ${response.status}: ${response.statusText}`
-                if (response.bodyUsed) {
-                    msg += `\n${await response.text()}`
-                }
+                try {
+                    const errorText = await response.text();
+                    if (errorText) {
+                        msg += `\n${errorText}`
+                    }
+                } catch (e) {}
                 msg += `\nRequest URL: ${url}`;
                 if (body) {
                     msg += `\nRequest Body: ${JSON.stringify(body, null, 2)}`;

@@ -7,6 +7,7 @@ import { SpotifyUserEndpoint } from "./user.js";
 import { SpotifyBrowseEndpoint } from "./browse.js";
 import { SpotifyLibraryEndpoint } from "./library.js";
 import { SpotifyRadioEndpoint } from "./radio.js";
+import { SpotifyCreditsEndpoint } from "./credits.js";
 import { generateRandomUserAgent } from "./utils.js";
 import { HttpClient } from "./http-client.js";
 import { preloadHashes } from "./hash-registry.js";
@@ -22,6 +23,7 @@ export default class SpotifyGqlApi {
     radio!: SpotifyRadioEndpoint;
     search!: SpotifySearchEndpoint;
     track!: SpotifyTrackEndpoint;
+    credits!: SpotifyCreditsEndpoint;
     user!: SpotifyUserEndpoint;
     private onUnauthorized?: () => void;
 
@@ -60,6 +62,7 @@ export default class SpotifyGqlApi {
         this.radio = new SpotifyRadioEndpoint(accessToken ?? '', this.onUnauthorized);
         this.search = new SpotifySearchEndpoint(this.gqlClient);
         this.track = new SpotifyTrackEndpoint(this.gqlClient);
+        this.credits = new SpotifyCreditsEndpoint(this.gqlClient);
         this.user = new SpotifyUserEndpoint(this.gqlClient);
     }
 }
