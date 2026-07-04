@@ -25,6 +25,8 @@ All notable changes to Luniq will be documented in this file.
 - **Credits Follow Button for Non-Artists:** Fixed an issue where the Follow button appeared for lyricists, composers, and producers in the Track Credits section. Following these non-artist contributors created empty artist pages in the library. The button now only renders for contributors whose roles include "Artist".
 - **Preview Panel Unused Variable Warning:** Removed the unused `profile` variable in `PreviewCarousel.tsx` that caused a TypeScript compiler warning.
 - **Preview Volume Not Persisted Across Tracks:** Fixed a bug where changing the volume in the preview panel had no effect on subsequent tracks — new `Audio` instances now inherit the current `volume` state instead of always defaulting to `0.8`.
+- **Preview Carousel Duplicate Key Warning:** Fixed a React warning caused by navigation dots using `track.id` as the key — when the same song appears twice in a playlist both dots got the same key. Keys now use the track's position index instead, which is always unique.
+- **Preview Carousel Unused Variable Warning:** Renamed the unused `track` parameter in the dots `.map()` callback to `_` to resolve the TypeScript compiler warning introduced by the key fix.
 
 #### Changed
 

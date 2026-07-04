@@ -417,11 +417,11 @@ const PreviewCarousel: React.FC<PreviewCarouselProps> = ({
               Math.max(0, activeIndex - 4),
               Math.min(tracks.length, activeIndex + 5),
             )
-            .map((track, i) => {
+            .map((_, i) => {
               const actualIndex = Math.max(0, activeIndex - 4) + i;
               return (
                 <div
-                  key={track.id}
+                  key={actualIndex}
                   className={`preview-dot ${actualIndex === activeIndex ? "active" : ""}`}
                   onClick={() => setActiveIndex(actualIndex)}
                 />
