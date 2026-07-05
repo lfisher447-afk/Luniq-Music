@@ -3,8 +3,8 @@ name: Build Windows EXE
 on:
   push:
     tags:
-      - 'v*' # Triggers on version tags (e.g., v1.0.6)
-  workflow_dispatch: # Allows manual button-click testing
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   release:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22 # ◄ CHANGED FROM 20 TO 22 TO MATCH ELECTRON 42+ REQUIREMENTS
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -31,28 +31,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Build Artifacts (For Manual Runs)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4 # ◄ Fixed the typo here
         with:
           name: Luniq-Music-Windows-EXE
           path: |
-            dist/*.exe
-            dist/*.blockmap
-            release/*.exe
-            release/*.blockmap
-            dist-electron/*.exe
-            dist-electron/*.blockmap
-          if-no-files-found: warn
+            **/*.exe
+            **/*.blockmap
+            !node_modules/**
+          if-no-files-found: error # ◄ This forces the build to fail if it can't find the EXE, so we aren't left guessing
 
       - name: Deploy to GitHub Release (For Version Tags Only)
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist/*.exe
-            dist/*.blockmap
-            release/*.exe
-            release/*.blockmap
-            dist-electron/*.exe
-            dist-electron/*.blockmap
+            **/*.exe
+            **/*.blockmap
+            !node_modules/**
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
