@@ -3,12 +3,14 @@ name: Build Windows EXE
 on:
   push:
     tags:
-      - 'v*' # Triggers on tags like v1.0.6
-  workflow_dispatch: # Allows manual clicking from the Actions tab
+      - 'v*' # Triggers on version tags (e.g., v1.0.6)
+  workflow_dispatch: # Allows manual button-click testing
 
 jobs:
   release:
     runs-on: windows-latest
+    permissions:
+      contents: write # CRITICAL: Gives the token authority to create/edit releases
 
     steps:
       - name: Checkout Repository
@@ -17,32 +19,42 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Highly recommended for better-sqlite3 compatibility
+          node-version: 20
           cache: 'npm'
 
       - name: Install Dependencies
-        # This will automatically trigger your "postinstall" script to verify 
-        # yt-dlp and rebuild better-sqlite3 for Electron.
+        # Runs npm ci, triggering your verification scripts and native rebuilds
         run: npm ci
 
       - name: Build and Package Executable
-        # Because your package.json 'build' command includes 'electron-builder',
-        # this single command compiles Vite AND creates the .exe file.
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Installer to GitHub Release
+      - name: Upload Build Artifacts (For Manual Runs)
+        # This guarantees you get your EXE even when testing manually without a tag!
+        uses: actions/upload-artifact@v4
+        with:
+          name: Luniq-Music-Windows-EXE
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+            release/*.exe
+            release/*.blockmap
+            dist-electron/*.exe
+            dist-electron/*.blockmap
+          if-no-files-found: warn
+
+      - name: Deploy to GitHub Release (For Version Tags Only)
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          # Assuming electron-builder outputs to a "dist" or "release" folder. 
-          # This wildcard catches the .exe wherever the builder drops it.
           files: |
             dist/*.exe
             dist/*.blockmap
             release/*.exe
             release/*.blockmap
-            out/*.exe
+            dist-electron/*.exe
+            dist-electron/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
