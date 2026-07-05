@@ -3,8 +3,8 @@ name: Build Windows EXE
 on:
   push:
     tags:
-      - 'v*' # Triggers whenever you push a tag starting with 'v' (e.g., v1.0.0)
-  workflow_dispatch: # Allows you to manually trigger the build from the GitHub Actions UI
+      - 'v*' # Triggers on tags like v1.0.6
+  workflow_dispatch: # Allows manual clicking from the Actions tab
 
 jobs:
   release:
@@ -17,17 +17,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-node-version: 20 # Match this to your local Node version
+          node-version: 20 # Highly recommended for better-sqlite3 compatibility
           cache: 'npm'
 
       - name: Install Dependencies
+        # This will automatically trigger your "postinstall" script to verify 
+        # yt-dlp and rebuild better-sqlite3 for Electron.
         run: npm ci
 
-      - name: Compile Application Assets
-        run: npm run build # Or your specific production compilation script
-
-      - name: Build Electron Executable
-        run: npx electron-builder --win --publish never
+      - name: Build and Package Executable
+        # Because your package.json 'build' command includes 'electron-builder',
+        # this single command compiles Vite AND creates the .exe file.
+        run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -35,8 +36,13 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          # Assuming electron-builder outputs to a "dist" or "release" folder. 
+          # This wildcard catches the .exe wherever the builder drops it.
           files: |
             dist/*.exe
             dist/*.blockmap
+            release/*.exe
+            release/*.blockmap
+            out/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
