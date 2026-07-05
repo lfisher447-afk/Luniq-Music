@@ -10,7 +10,7 @@ jobs:
   release:
     runs-on: windows-latest
     permissions:
-      contents: write # CRITICAL: Gives the token authority to create/edit releases
+      contents: write 
 
     steps:
       - name: Checkout Repository
@@ -19,11 +19,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # ◄ CHANGED FROM 20 TO 22 TO MATCH ELECTRON 42+ REQUIREMENTS
           cache: 'npm'
 
       - name: Install Dependencies
-        # Runs npm ci, triggering your verification scripts and native rebuilds
         run: npm ci
 
       - name: Build and Package Executable
@@ -32,7 +31,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Build Artifacts (For Manual Runs)
-        # This guarantees you get your EXE even when testing manually without a tag!
         uses: actions/upload-artifact@v4
         with:
           name: Luniq-Music-Windows-EXE
